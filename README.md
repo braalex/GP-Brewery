@@ -6,14 +6,29 @@
 ## Сущности
 Ниже перечислены сущности в предметной области проекта и их поля.
 
-### Employee (Сотрудник)
-Сотрудник пивоварни (директор и пивовары).
+### Director (Директор)
+Директор пивоварни.
 
 Поля:
 
+- Email
 - ФИО
 - Должность
 - Дата рождения
+
+### Brewer (Пивовар)
+Сотрудник пивоварни.
+
+Поля:
+
+- Email
+- ФИО
+- Должность
+- Дата рождения
+
+Связи:
+
+- Варки пива, закреплённые за пивоваром ("Brew")
 
 ### Customer (Покупатель)
 Организация, закупающая пиво.
@@ -23,7 +38,25 @@
 - Email
 - Категория
 - Название
-- Скидка
+
+Связи:
+
+- Совершённые заказы ("Order")
+
+### Order (Заказ)
+Заказ партии пива, совершённый покупателем.
+
+Поля:
+
+- Покупатель
+- Сорт
+- Количество
+- Дата заказа
+
+Связи:
+
+- Данные покупателя ("Customer")
+- Сорт заказанного пива ("Beer")
 
 ### Beer (Сорт пива)
 Сорт пива, производимый на пивоварне.
@@ -64,7 +97,7 @@
 
 Связи:
 
-- Ответственный пивовар ("Employee")
+- Ответственный пивовар ("Brewer")
 - Сорт производимого пива ("Beer")
 - Ингредиенты для производства ("Ingredient")
 
@@ -80,7 +113,7 @@ Request:
   "email" : "craft-bar@email.com",
   "password" : "qwerty",
   "category" : "bar",
-  "companyName" : "Craft Bar" 
+  "companyName" : "Craft Bar"
 }
 ```
 
@@ -88,7 +121,7 @@ Response: `201 CREATED`
 
 ```
 {
-  "id" : 1
+  "customerId" : 1
 }
 ```
 
@@ -109,7 +142,7 @@ Response: `200 OK`
 
 ```
 {
-  "id" : 1
+  "customerId" : 1
 }
 ```
 
@@ -124,7 +157,7 @@ Response: `200 OK`
 ```
 [
   {
-    "id" : 1,
+    "beerId" : 1,
     "type" : "Stout",
     "beerName" : "Espresso Stout",
     "ABV" : 6.1,
@@ -134,7 +167,7 @@ Response: `200 OK`
     "stockLevel" : 350
   },
   {
-    "id" : 2,
+    "beerId" : 2,
     "type" : "IPA",
     "beerName" : "Madness",
     "ABV" : 6.6,
@@ -146,28 +179,175 @@ Response: `200 OK`
 ]
 ```
 
-### GPB-4 Как "Покупатель" я хочу заказать 100 литров пива с id 1, и, если такое количество есть на складе, в результате заказываю его
+### GPB-4 Как "Покупатель" я хочу совершить заказ на 100 литров пива с id 1, и, если такое количество есть на складе, в результате заказываю его
 
 Request:
 
-`GET /brewery-app/beer/1/order/100`
+`POST /brewery-app/customer/1/order/new`
 
-`Headers: customerId=1`
+```
+{
+  "customerId" : 1,
+  "beerId" : 1,
+  "quantity" : 100,
+  "orderDate" : "06.02.2020"
+}
+```
+
+Response: `201 CREATED`
+
+```
+{
+  "orderId" : 15
+}
+```
+
+### GPB-5 Как "Покупатель" я хочу получить список своих заказов, и в результате получаю его
+
+Request:
+
+`GET /brewery-app/customer/1/order/list`
 
 Response: `200 OK`
 
-### GPB-5 Как "Сотрудник" я хочу получить список запланированных варок, и в результате получаю его
+```
+{
+  "orderId" : 15,
+  "customerId" : 1,
+  "beerId" : 1,
+  "quantity" : 100,
+  "orderDate" : "06.02.2020"
+}
+```
+
+### GPB-6 Как "Пивовар" я хочу зарегистрироваться в системе, и, если такого пользователя не найдено, регистрируюсь
 
 Request:
 
-`GET /brewery-app/brew/list`
+`POST /brewery-app/brewer/sign-up`
+
+```
+{
+  "email" : "ivanov123@email.com",
+  "password" : "ilovebeer",
+  "position" : "brewer",
+  "dateOfBirth" : "11.06.1982" 
+}
+```
+
+Response: `201 CREATED`
+
+```
+{
+  "brewerId" : 5
+}
+```
+
+### GPB-7 Как "Пивовар", будучи зарегистрированным пользователем, я хочу войти в систему, и, если такой пользователь существует и пароль совпадает, войти в систему
+
+Request:
+
+`POST /brewery-app/brewer/sign-in`
+
+```
+{
+  "email" : "ivanov123@email.com",
+  "password" : "ilovebeer"
+}
+```
+
+Response: `200 OK`
+
+```
+{
+  "brewerId" : 5
+}
+```
+
+### GPB-8 Как "Пивовар" я хочу получить список варок, в которых я участвую, и в результате получаю его
+
+Request:
+
+`GET /brewery-app/brewer/5/brew/list`
+
+Response: `200 OK`
+
+```
+{
+    "brewId" : 1,
+    "brewerId" : 5,
+    "beerName" : "Hoppy Lager",
+    "ingredients" : [
+          {"type" : "water", "name" : "Water"},
+          {"type" : "hops", "name" : "Cascade"},
+          {"type" : "malt", "name" : "Rye Malt"},
+          {"type" : "yeast", "name" : "Yeast"},
+    ],
+    "startDate" : "10.02.2020",
+    "endDate" : "25.03.2020"
+}
+```
+
+### GPB-9 Как "Директор", будучи зарегистрированным пользователем, я хочу войти в систему, и, если такой пользователь существует и пароль совпадает, войти в систему
+
+Request:
+
+`POST /brewery-app/director/sign-in`
+
+```
+{
+  "email" : "bigboss@email.com",
+  "password" : "secretpass"
+}
+```
+
+Response: `200 OK`
+
+```
+{
+  "id" : 1
+}
+```
+
+### GPB-10 Как "Директор" я хочу получить список всех совершённых заказов, и в результате получаю его
+
+Request:
+
+`GET /brewery-app/director/order/list`
 
 Response: `200 OK`
 
 ```
 [
   {
-    "id" : 1,
+  "orderId" : 15,
+  "customerId" : 1,
+  "beerId" : 1,
+  "quantity" : 100,
+  "orderDate" : "06.02.2020"
+},
+  {
+  "orderId" : 16,
+  "customerId" : 4,
+  "beerId" : 2,
+  "quantity" : 150,
+  "orderDate" : "07.02.2020"
+  }
+]
+```
+
+### GPB-11 Как "Директор" я хочу получить список всех варок, и в результате получаю его
+
+Request:
+
+`GET /brewery-app/director/brew/list`
+
+Response: `200 OK`
+
+```
+[
+  {
+    "brewId" : 1,
     "brewerId" : 5,
     "beerName" : "Hoppy Lager",
     "ingredients" : [
@@ -180,7 +360,7 @@ Response: `200 OK`
     "endDate" : "25.03.2020"
   },
   {
-    "id" : 2,
+    "brewId" : 2,
     "brewerId" : 3,
     "beerName" : "Wheat",
     "ingredients" : [
@@ -193,4 +373,33 @@ Response: `200 OK`
     "endDate" : "20.04.2020"
   }
 ]
+```
+
+### GPB-12 Как "Директор" я хочу добавить в план новую варку, и в результате добавляю её
+
+Request:
+
+`POST /brewery-app/director/brew/new`
+
+```
+{
+    "brewerId" : 5,
+    "beerName" : "Baltic Porter",
+    "ingredients" : [
+          {"type" : "water", "name" : "Water"},
+          {"type" : "hops", "name" : "Magnum"},
+          {"type" : "malt", "name" : "Brown Malt"},
+          {"type" : "yeast", "name" : "Ale Yeast"},
+    ],
+    "startDate" : "05.03.2020",
+    "endDate" : "12.05.2020"
+  }
+```
+
+Response: `201 CREATED`
+
+```
+{
+  "brewId" : 3
+}
 ```
