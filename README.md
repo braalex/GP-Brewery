@@ -16,6 +16,11 @@
 - Должность
 - Дата рождения
 
+Связи:
+
+- Возможность просмотра и добавления новых варок пива ("Brew")
+- Просмотр совершённых заказов ("Order")
+
 ### Brewer (Пивовар)
 Сотрудник пивоварни.
 
@@ -106,7 +111,7 @@
 ### GPB-1 Как "Покупатель" я хочу зарегистрироваться в системе, и, если такого пользователя не найдено, регистрируюсь
 Request:
 
-`POST /brewery-app/customer/sign-up`
+`POST /brewery-app/customers/sign-up`
 
 ```
 {
@@ -129,7 +134,7 @@ Response: `201 CREATED`
 
 Request:
 
-`POST /brewery-app/customer/sign-in`
+`POST /brewery-app/customers/sign-in`
 
 ```
 {
@@ -146,11 +151,11 @@ Response: `200 OK`
 }
 ```
 
-### GPB-3 Как "Покупатель" я хочу получить список доступных для заказа сортов пива, и в результате получаю его
+### GPB-3 Как "Покупатель" я хочу получить список доступных для заказа сортов пива, чтобы выбрать позиции для заказа
 
 Request:
 
-`GET /brewery-app/beer/list`
+`GET /brewery-app/beers`
 
 Response: `200 OK`
 
@@ -179,11 +184,11 @@ Response: `200 OK`
 ]
 ```
 
-### GPB-4 Как "Покупатель" я хочу совершить заказ на 100 литров пива с id 1, и, если такое количество есть на складе, в результате заказываю его
+### GPB-4 Как "Покупатель" я хочу совершить заказ на 100 литров пива с id 1, чтобы пополнить свой ассортимент
 
 Request:
 
-`POST /brewery-app/customer/1/order/new`
+`POST /brewery-app/customers/1/orders`
 
 ```
 {
@@ -202,11 +207,11 @@ Response: `201 CREATED`
 }
 ```
 
-### GPB-5 Как "Покупатель" я хочу получить список своих заказов, и в результате получаю его
+### GPB-5 Как "Покупатель" я хочу получить список своих заказов, чтобы оценить заказанный ассортимент и объёмы
 
 Request:
 
-`GET /brewery-app/customer/1/order/list`
+`GET /brewery-app/customers/1/orders`
 
 Response: `200 OK`
 
@@ -224,7 +229,7 @@ Response: `200 OK`
 
 Request:
 
-`POST /brewery-app/brewer/sign-up`
+`POST /brewery-app/brewers/sign-up`
 
 ```
 {
@@ -247,7 +252,7 @@ Response: `201 CREATED`
 
 Request:
 
-`POST /brewery-app/brewer/sign-in`
+`POST /brewery-app/brewers/sign-in`
 
 ```
 {
@@ -264,11 +269,11 @@ Response: `200 OK`
 }
 ```
 
-### GPB-8 Как "Пивовар" я хочу получить список варок, в которых я участвую, и в результате получаю его
+### GPB-8 Как "Пивовар" я хочу получить список варок, в которых я участвую, чтобы знать свою рабочую загрузку
 
 Request:
 
-`GET /brewery-app/brewer/5/brew/list`
+`GET /brewery-app/brewers/5/brews`
 
 Response: `200 OK`
 
@@ -309,11 +314,11 @@ Response: `200 OK`
 }
 ```
 
-### GPB-10 Как "Директор" я хочу получить список всех совершённых заказов, и в результате получаю его
+### GPB-10 Как "Директор" я хочу получить список всех совершённых заказов, чтобы оценить объём закупок и запланировать новые варки
 
 Request:
 
-`GET /brewery-app/director/order/list`
+`GET /brewery-app/director/orders`
 
 Response: `200 OK`
 
@@ -336,11 +341,11 @@ Response: `200 OK`
 ]
 ```
 
-### GPB-11 Как "Директор" я хочу получить список всех варок, и в результате получаю его
+### GPB-11 Как "Директор" я хочу получить список всех варок, чтобы узнать загрузку своих пивоваров
 
 Request:
 
-`GET /brewery-app/director/brew/list`
+`GET /brewery-app/director/brews`
 
 Response: `200 OK`
 
@@ -375,11 +380,11 @@ Response: `200 OK`
 ]
 ```
 
-### GPB-12 Как "Директор" я хочу добавить в план новую варку, и в результате добавляю её
+### GPB-12 Как "Директор" я хочу добавить в план новую варку, чтобы удовлетворить спрос покупателей
 
 Request:
 
-`POST /brewery-app/director/brew/new`
+`POST /brewery-app/director/brews`
 
 ```
 {
