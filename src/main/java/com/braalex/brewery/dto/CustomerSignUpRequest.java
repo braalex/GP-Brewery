@@ -3,7 +3,7 @@ package com.braalex.brewery.dto;
 import lombok.Data;
 
 @Data
-public class CustomerSignInRequest {
+public class CustomerSignUpRequest {
     private String email;
     private String password;
     private String category;

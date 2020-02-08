@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -22,7 +23,7 @@ public class CustomerControllerTest {
     public void testCustomerSignUpIsCreated() throws Exception {
         // given
         // when
-        mockMvc.perform(post("/customer/sign-up")
+        mockMvc.perform(post("/customers/sign-up")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\n" +
                         " \"email\" : \"craft-bar@email.com\",\n" +
@@ -33,7 +34,7 @@ public class CustomerControllerTest {
                 // then
                 .andExpect(status().isCreated())
                 .andExpect(content().json("{\n" +
-                        "  \"customerId\" : 1\n" +
+                        " \"id\" : 1\n" +
                         "}"));
     }
 
@@ -41,16 +42,53 @@ public class CustomerControllerTest {
     public void testCustomerSignInIsOk() throws Exception {
         // given
         // when
-        mockMvc.perform(post("/customer/sign-in")
+        mockMvc.perform(post("/customers/sign-in")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\n" +
-                        "  \"email\" : \"craft-bar@email.com\",\n" +
-                        "  \"password\" : \"qwerty\"\n" +
+                        " \"email\" : \"craft-bar@email.com\",\n" +
+                        " \"password\" : \"qwerty\"\n" +
                         "}"))
                 // then
                 .andExpect(status().isOk())
                 .andExpect(content().json("{\n" +
-                        "  \"customerId\" : 1\n" +
+                        " \"id\" : 1\n" +
                         "}"));
+    }
+
+    @Test
+    public void testCustomerNewOrderIsCreated() throws Exception {
+        // given
+        // when
+        mockMvc.perform(post("/customers/1/orders")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\n" +
+                        " \"customerId\" : 1,\n" +
+                        " \"beerId\" : 1,\n" +
+                        " \"quantity\" : 100,\n" +
+                        " \"orderDate\" : \"2020-02-06\" \n" +
+                        "}"))
+                // then
+                .andExpect(status().isCreated())
+                .andExpect(content().json("{\n" +
+                        " \"id\" : 15\n" +
+                        "}"));
+    }
+
+    @Test
+    public void testCustomerGetOrderListIsOk() throws Exception {
+        // given
+        // when
+        mockMvc.perform(get("/customers/1/orders"))
+                // then
+                .andExpect(status().isOk())
+                .andExpect(content().json("[\n" +
+                        "  {\n" +
+                        "    \"orderId\" : 15, \n" +
+                        "    \"customerId\" : 1, \n" +
+                        "    \"beerId\" : 1, \n" +
+                        "    \"quantity\" : 100,\n" +
+                        "    \"orderDate\" : \"2020-02-06\" \n" +
+                        "  }\n" +
+                        "]"));
     }
 }

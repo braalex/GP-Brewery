@@ -12,8 +12,8 @@
 Поля:
 
 - Email
-- ФИО
-- Должность
+- Имя
+- Фамилия
 - Дата рождения
 
 Связи:
@@ -27,8 +27,8 @@
 Поля:
 
 - Email
-- ФИО
-- Должность
+- Имя
+- Фамилия
 - Дата рождения
 
 Связи:
@@ -73,11 +73,12 @@
 - Крепость
 - Плотность
 - Описание
+- Список ингредиентов
 - Цена за литр
-- Доступное количество
 
 Связи:
 
+- Директор добавляет новые сорта в ассортимент продукции ("Director")
 - Ингредиенты, необходимые для производства данного сорта ("Ingredient")
 
 ### Ingredient (Ингредиент)
@@ -95,13 +96,12 @@
 
 - Пивовар
 - Сорт
-- Количество
-- Ингредиенты
 - Дата начала
 - Дата окончания
 
 Связи:
 
+- Директор планирует новые варки ("Director")
 - Ответственный пивовар ("Brewer")
 - Сорт производимого пива ("Beer")
 - Ингредиенты для производства ("Ingredient")
@@ -126,7 +126,7 @@ Response: `201 CREATED`
 
 ```
 {
-  "customerId" : 1
+  "id" : 1
 }
 ```
 
@@ -147,7 +147,7 @@ Response: `200 OK`
 
 ```
 {
-  "customerId" : 1
+  "id" : 1
 }
 ```
 
@@ -165,21 +165,29 @@ Response: `200 OK`
     "beerId" : 1,
     "type" : "Stout",
     "beerName" : "Espresso Stout",
-    "ABV" : 6.1,
+    "abv" : 6.1,
     "originalGravity" : 14.0,
-    "description" : "Кофейный стаут",
-    "price" : 4.2,
-    "stockLevel" : 350
+    "description" : "Coffee stout",
+    "ingredients" : [
+              {"type" : "HOPS", "name" : "Magnum"},
+              {"type" : "MALT", "name" : "Brown Malt"},
+              {"type" : "YEAST", "name" : "Ale Yeast"}
+    ],
+    "price" : 4.2
   },
   {
     "beerId" : 2,
     "type" : "IPA",
     "beerName" : "Madness",
-    "ABV" : 6.6,
+    "abv" : 6.6,
     "originalGravity" : 13.0,
-    "description" : "IPA в американском стиле",
-    "price" : 5.3,
-    "stockLevel" : 200
+    "description" : "American style IPA",
+    "ingredients" : [
+              {"type" : "HOPS", "name" : "Cascade"},
+              {"type" : "MALT", "name" : "Rye Malt"},
+              {"type" : "YEAST", "name" : "Yeast"}
+    ],
+    "price" : 5.3
   }
 ]
 ```
@@ -195,7 +203,7 @@ Request:
   "customerId" : 1,
   "beerId" : 1,
   "quantity" : 100,
-  "orderDate" : "06.02.2020"
+  "orderDate" : "2020-02-06"
 }
 ```
 
@@ -203,7 +211,7 @@ Response: `201 CREATED`
 
 ```
 {
-  "orderId" : 15
+  "id" : 15
 }
 ```
 
@@ -216,13 +224,15 @@ Request:
 Response: `200 OK`
 
 ```
-{
-  "orderId" : 15,
-  "customerId" : 1,
-  "beerId" : 1,
-  "quantity" : 100,
-  "orderDate" : "06.02.2020"
-}
+[
+  {
+    "orderId" : 15,
+    "customerId" : 1,
+    "beerId" : 1,
+    "quantity" : 100,
+    "orderDate" : "2020-02-06"
+  }
+]
 ```
 
 ### GPB-6 Как "Пивовар" я хочу зарегистрироваться в системе, и, если такого пользователя не найдено, регистрируюсь
@@ -235,8 +245,9 @@ Request:
 {
   "email" : "ivanov123@email.com",
   "password" : "ilovebeer",
-  "position" : "brewer",
-  "dateOfBirth" : "11.06.1982" 
+  "firstName" : "Sergey",
+  "lastName" : "Ivanov",
+  "dateOfBirth" : "1982-06-11" 
 }
 ```
 
@@ -244,7 +255,7 @@ Response: `201 CREATED`
 
 ```
 {
-  "brewerId" : 5
+  "id" : 5
 }
 ```
 
@@ -265,7 +276,7 @@ Response: `200 OK`
 
 ```
 {
-  "brewerId" : 5
+  "id" : 5
 }
 ```
 
@@ -278,19 +289,15 @@ Request:
 Response: `200 OK`
 
 ```
-{
+[
+  {
     "brewId" : 1,
     "brewerId" : 5,
-    "beerName" : "Hoppy Lager",
-    "ingredients" : [
-          {"type" : "water", "name" : "Water"},
-          {"type" : "hops", "name" : "Cascade"},
-          {"type" : "malt", "name" : "Rye Malt"},
-          {"type" : "yeast", "name" : "Yeast"},
-    ],
-    "startDate" : "10.02.2020",
-    "endDate" : "25.03.2020"
-}
+    "beerId" : "2,
+    "startDate" : "2020-02-10",
+    "endDate" : "2020-03-25"
+  }
+]
 ```
 
 ### GPB-9 Как "Директор", будучи зарегистрированным пользователем, я хочу войти в систему, и, если такой пользователь существует и пароль совпадает, войти в систему
@@ -314,7 +321,7 @@ Response: `200 OK`
 }
 ```
 
-### GPB-10 Как "Директор" я хочу получить список всех совершённых заказов, чтобы оценить объём закупок и запланировать новые варки
+### GPB-10 Как "Директор" я хочу получить список всех совершённых заказов, чтобы оценить объём продаж и запланировать новые варки
 
 Request:
 
@@ -325,18 +332,18 @@ Response: `200 OK`
 ```
 [
   {
-  "orderId" : 15,
-  "customerId" : 1,
-  "beerId" : 1,
-  "quantity" : 100,
-  "orderDate" : "06.02.2020"
-},
+    "orderId" : 15,
+    "customerId" : 1,
+    "beerId" : 1,
+    "quantity" : 100,
+    "orderDate" : "2020-02-06"
+  },
   {
-  "orderId" : 16,
-  "customerId" : 4,
-  "beerId" : 2,
-  "quantity" : 150,
-  "orderDate" : "07.02.2020"
+    "orderId" : 16,
+    "customerId" : 4,
+    "beerId" : 2,
+    "quantity" : 150,
+    "orderDate" : "2020-02-07"
   }
 ]
 ```
@@ -354,57 +361,69 @@ Response: `200 OK`
   {
     "brewId" : 1,
     "brewerId" : 5,
-    "beerName" : "Hoppy Lager",
-    "ingredients" : [
-          {"type" : "water", "name" : "Water"},
-          {"type" : "hops", "name" : "Cascade"},
-          {"type" : "malt", "name" : "Rye Malt"},
-          {"type" : "yeast", "name" : "Yeast"},
-    ],
-    "startDate" : "10.02.2020",
-    "endDate" : "25.03.2020"
+    "beerId" : 2,
+    "startDate" : "2020-02-10",
+    "endDate" : "2020-03-25"
   },
   {
     "brewId" : 2,
     "brewerId" : 3,
-    "beerName" : "Wheat",
-    "ingredients" : [
-          {"type" : "water", "name" : "Water"},
-          {"type" : "hops", "name" : "Zatec"},
-          {"type" : "malt", "name" : "Wheat Malt"},
-          {"type" : "yeast", "name" : "Yeast"},
-    ],
-    "startDate" : "20.02.2020",
-    "endDate" : "20.04.2020"
+    "beerId" : 1,
+    "startDate" : "2020-02-20",
+    "endDate" : "2020-04-20"
   }
 ]
 ```
 
-### GPB-12 Как "Директор" я хочу добавить в план новую варку, чтобы удовлетворить спрос покупателей
+### GPB-12 Как "Директор" я хочу добавить в перечень новый сорт пива, чтобы расширить ассортимент
 
 Request:
 
-`POST /brewery-app/director/brews`
+`POST /brewery-app/director/beers`
 
 ```
 {
-    "brewerId" : 5,
-    "beerName" : "Baltic Porter",
-    "ingredients" : [
-          {"type" : "water", "name" : "Water"},
-          {"type" : "hops", "name" : "Magnum"},
-          {"type" : "malt", "name" : "Brown Malt"},
-          {"type" : "yeast", "name" : "Ale Yeast"},
-    ],
-    "startDate" : "05.03.2020",
-    "endDate" : "12.05.2020"
-  }
+  "type" : "Wheat",
+  "beerName" : "Summer",
+  "abv" : 4.5,
+  "originalGravity" : 9.0,
+  "description" : "Belgian style wheat beer",
+  "ingredients" : [
+            {"type" : "HOPS", "name" : "Zatec"},
+            {"type" : "MALT", "name" : "Wheat Malt"},
+            {"type" : "YEAST", "name" : "Yeast"},
+  ],
+  "price" : 3.5
+}
 ```
 
 Response: `201 CREATED`
 
 ```
 {
-  "brewId" : 3
+  "id" : 3
+}
+```
+
+### GPB-13 Как "Директор" я хочу добавить в план новую варку, чтобы удовлетворить спрос покупателей
+
+Request:
+
+`POST /brewery-app/director/brews`
+
+```  
+{
+    "brewerId" : 5,
+    "beerId" : 3,
+    "startDate" : "2020-03-05",
+    "endDate" : "2020-05-12"
+}
+```
+
+Response: `201 CREATED`
+
+```
+{
+  "id" : 3
 }
 ```
