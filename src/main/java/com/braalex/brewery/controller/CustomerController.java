@@ -4,6 +4,7 @@ import com.braalex.brewery.dto.CustomerSignUpRequest;
 import com.braalex.brewery.dto.IdResponse;
 import com.braalex.brewery.dto.OrderDto;
 import com.braalex.brewery.dto.UserSignInRequest;
+import com.braalex.brewery.exception.SuchUserAlreadyExistException;
 import com.braalex.brewery.service.CustomerService;
 import com.braalex.brewery.service.OrderService;
 import lombok.Data;
@@ -26,7 +27,8 @@ public class CustomerController {
 
     @PostMapping(value = "/sign-up", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public IdResponse signUp(@RequestBody final CustomerSignUpRequest request) {
+    public IdResponse signUp(@RequestBody final CustomerSignUpRequest request)
+            throws SuchUserAlreadyExistException {
         log.info("email = " + request.getEmail());
         log.info("category = " + request.getCategory());
         return customerService.signUp(request);
