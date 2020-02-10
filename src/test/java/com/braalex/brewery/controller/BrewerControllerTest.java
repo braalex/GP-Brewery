@@ -35,7 +35,11 @@ public class BrewerControllerTest {
                 // then
                 .andExpect(status().isCreated())
                 .andExpect(content().json("{\n" +
-                        " \"id\" : 5\n" +
+                        " \"id\" : 5,\n" +
+                        " \"email\" : \"ivanov123@email.com\",\n" +
+                        " \"firstName\" : \"Sergey\",\n" +
+                        " \"lastName\" : \"Ivanov\",\n" +
+                        " \"dateOfBirth\" : \"1982-06-11\" \n" +
                         "}"));
     }
 
@@ -52,7 +56,8 @@ public class BrewerControllerTest {
                 // then
                 .andExpect(status().isOk())
                 .andExpect(content().json("{\n" +
-                        " \"id\" : 5\n" +
+                        " \"id\" : 5,\n" +
+                        " \"email\" : \"ivanov123@email.com\"\n" +
                         "}"));
     }
 
@@ -65,7 +70,7 @@ public class BrewerControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().json("[\n" +
                         "  {\n" +
-                        "    \"brewId\" : 1, \n" +
+                        "    \"id\" : 1, \n" +
                         "    \"brewerId\" : 5, \n" +
                         "    \"beerId\" : 2, \n" +
                         "    \"startDate\" : \"2020-02-10\",\n" +

@@ -8,7 +8,7 @@ import java.util.List;
 @Data
 @Builder
 public class BeerDto {
-    private long beerId;
+    private long id;
     private String type;
     private String beerName;
     private double abv;

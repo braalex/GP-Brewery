@@ -1,18 +1,24 @@
 package com.braalex.brewery.service;
 
-import com.braalex.brewery.dto.CustomerSignUpRequest;
-import com.braalex.brewery.dto.IdResponse;
-import com.braalex.brewery.dto.UserSignInRequest;
+import com.braalex.brewery.dto.*;
 import org.springframework.stereotype.Service;
 
 @Service
 public class CustomerService {
-    public IdResponse signUp(final CustomerSignUpRequest request) {
-        return new IdResponse(1);
+    public CustomerSignUpResponseDto signUp(final CustomerSignUpRequestDto request) {
+        return CustomerSignUpResponseDto.builder()
+                .id(1L)
+                .email(request.getEmail())
+                .category(request.getCategory())
+                .companyName(request.getCompanyName())
+                .build();
     }
 
-    public IdResponse signIn(final UserSignInRequest request) {
-        return new IdResponse(1);
+    public UserSignInResponseDto signIn(final UserSignInRequestDto request) {
+        return UserSignInResponseDto.builder()
+                .id(1L)
+                .email(request.getEmail())
+                .build();
     }
 
 }

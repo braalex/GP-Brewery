@@ -1,9 +1,6 @@
 package com.braalex.brewery.controller;
 
-import com.braalex.brewery.dto.CustomerSignUpRequest;
-import com.braalex.brewery.dto.IdResponse;
-import com.braalex.brewery.dto.OrderDto;
-import com.braalex.brewery.dto.UserSignInRequest;
+import com.braalex.brewery.dto.*;
 import com.braalex.brewery.exception.SuchUserAlreadyExistException;
 import com.braalex.brewery.service.CustomerService;
 import com.braalex.brewery.service.OrderService;
@@ -14,7 +11,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Log
 @Data
@@ -27,7 +23,7 @@ public class CustomerController {
 
     @PostMapping(value = "/sign-up", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public IdResponse signUp(@RequestBody final CustomerSignUpRequest request)
+    public CustomerSignUpResponseDto signUp(@RequestBody final CustomerSignUpRequestDto request)
             throws SuchUserAlreadyExistException {
         log.info("email = " + request.getEmail());
         log.info("category = " + request.getCategory());
@@ -35,24 +31,21 @@ public class CustomerController {
     }
 
     @PostMapping(value = "/sign-in", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public IdResponse signIn(@RequestBody final UserSignInRequest request) {
+    public UserSignInResponseDto signIn(@RequestBody final UserSignInRequestDto request) {
         log.info("email = " + request.getEmail());
         return customerService.signIn(request);
     }
 
-    @PostMapping(value = "/1/orders", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/{id}/orders", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public IdResponse createOrder(@RequestBody final OrderDto request) {
+    public OrderDto createOrder(@PathVariable final long id, @RequestBody final OrderDto request) {
         log.info("Order date: " + request.getOrderDate());
-        return orderService.createOrder(request);
+        return orderService.createOrder(id, request);
     }
 
-    @GetMapping(value = "/1/orders")
-    public List<OrderDto> getList() {
-        List<OrderDto> orderList = orderService.getList()
-                .stream()
-                .filter(order -> order.getCustomerId() == 1)
-                .collect(Collectors.toList());
+    @GetMapping(value = "/{id}/orders")
+    public List<OrderDto> getOrders(@PathVariable final long id) {
+        List<OrderDto> orderList = orderService.getOrdersByCustomer(id);
         log.info("Number of beers: " + orderList.size());
         log.info("Order date: " + orderList.get(0).getOrderDate());
         return orderList;

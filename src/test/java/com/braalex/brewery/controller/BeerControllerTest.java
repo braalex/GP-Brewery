@@ -26,7 +26,7 @@ public class BeerControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().json("[\n" +
                                 "  {\n" +
-                                "    \"beerId\" : 1, \n" +
+                                "    \"id\" : 1, \n" +
                                 "    \"type\" : \"Stout\",\n" +
                                 "    \"beerName\" : \"Espresso Stout\",\n" +
                                 "    \"abv\" : 6.1,\n" +
@@ -40,7 +40,7 @@ public class BeerControllerTest {
                                 "    \"price\" : 4.2 \n" +
                                 "  },\n" +
                                 "  {\n" +
-                                "    \"beerId\" : 2, \n" +
+                                "    \"id\" : 2, \n" +
                                 "    \"type\" : \"IPA\",\n" +
                                 "    \"beerName\" : \"Madness\",\n" +
                                 "    \"abv\" : 6.6,\n" +

@@ -20,9 +20,10 @@ public class BeerController {
 
     @GetMapping
     public List<BeerDto> getList() {
-        log.info("Number of beers: " + beerService.getList().size());
-        log.info("1: " + beerService.getList().get(0).getBeerName());
-        log.info("2: " + beerService.getList().get(1).getBeerName());
-        return beerService.getList();
+        List<BeerDto> beerList = beerService.getBeers();
+        log.info("Number of beers: " + beerList.size());
+        log.info("1: " + beerList.get(0).getBeerName());
+        log.info("2: " + beerList.get(1).getBeerName());
+        return beerList;
     }
 }

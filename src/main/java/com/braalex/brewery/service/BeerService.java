@@ -1,7 +1,6 @@
 package com.braalex.brewery.service;
 
 import com.braalex.brewery.dto.BeerDto;
-import com.braalex.brewery.dto.IdResponse;
 import com.braalex.brewery.dto.IngredientDto;
 import com.braalex.brewery.dto.IngredientType;
 import org.springframework.stereotype.Service;
@@ -12,7 +11,7 @@ import java.util.List;
 public class BeerService {
 
     private final List<BeerDto> beers = List.of(BeerDto.builder()
-                    .beerId(1L)
+                    .id(1L)
                     .type("Stout")
                     .beerName("Espresso Stout")
                     .abv(6.1)
@@ -33,7 +32,7 @@ public class BeerService {
                     .price(4.2)
                     .build(),
             BeerDto.builder()
-                    .beerId(2L)
+                    .id(2L)
                     .type("IPA")
                     .beerName("Madness")
                     .abv(6.6)
@@ -54,11 +53,20 @@ public class BeerService {
                     .price(5.3)
                     .build());
 
-    public List<BeerDto> getList() {
+    public List<BeerDto> getBeers() {
         return beers;
     }
 
-    public IdResponse createBeer(BeerDto request) {
-        return new IdResponse(3);
+    public BeerDto createBeer(final BeerDto request) {
+        return BeerDto.builder()
+                .id(3L)
+                .type(request.getType())
+                .beerName(request.getBeerName())
+                .abv(request.getAbv())
+                .originalGravity(request.getOriginalGravity())
+                .description(request.getDescription())
+                .ingredients(request.getIngredients())
+                .price(request.getPrice())
+                .build();
     }
 }

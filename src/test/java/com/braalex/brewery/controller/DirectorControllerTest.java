@@ -32,7 +32,8 @@ public class DirectorControllerTest {
                 // then
                 .andExpect(status().isOk())
                 .andExpect(content().json("{\n" +
-                        " \"id\" : 1\n" +
+                        " \"id\" : 1,\n" +
+                        " \"email\" : \"bigboss@email.com\"\n" +
                         "}"));
     }
 
@@ -45,14 +46,14 @@ public class DirectorControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().json("[\n" +
                         "  {\n" +
-                        "    \"orderId\" : 15, \n" +
+                        "    \"id\" : 15, \n" +
                         "    \"customerId\" : 1, \n" +
                         "    \"beerId\" : 1, \n" +
                         "    \"quantity\" : 100,\n" +
                         "    \"orderDate\" : \"2020-02-06\" \n" +
                         "  },\n" +
                         "  {\n" +
-                        "    \"orderId\" : 16, \n" +
+                        "    \"id\" : 16, \n" +
                         "    \"customerId\" : 4, \n" +
                         "    \"beerId\" : 2, \n" +
                         "    \"quantity\" : 150,\n" +
@@ -70,14 +71,14 @@ public class DirectorControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().json("[\n" +
                         "  {\n" +
-                        "    \"brewId\" : 1, \n" +
+                        "    \"id\" : 1, \n" +
                         "    \"brewerId\" : 5, \n" +
                         "    \"beerId\" : 2, \n" +
                         "    \"startDate\" : \"2020-02-10\",\n" +
                         "    \"endDate\" : \"2020-03-25\" \n" +
                         "  },\n" +
                         "  {\n" +
-                        "    \"brewId\" : 2, \n" +
+                        "    \"id\" : 2, \n" +
                         "    \"brewerId\" : 3, \n" +
                         "    \"beerId\" : 1, \n" +
                         "    \"startDate\" : \"2020-02-20\",\n" +
@@ -108,7 +109,18 @@ public class DirectorControllerTest {
                 // then
                 .andExpect(status().isCreated())
                 .andExpect(content().json("{\n" +
-                        " \"id\" : 3\n" +
+                        "    \"id\" : 3,\n" +
+                        "    \"type\" : \"Wheat\",\n" +
+                        "    \"beerName\" : \"Summer\",\n" +
+                        "    \"abv\" : 4.5,\n" +
+                        "    \"originalGravity\" : 9.0,\n" +
+                        "    \"description\" : \"Belgian style wheat beer\",\n" +
+                        "    \"ingredients\" : [\n" +
+                        "           {\"type\" : \"HOPS\", \"name\" : \"Zatec\"},\n" +
+                        "           {\"type\" : \"MALT\", \"name\" : \"Wheat Malt\"},\n" +
+                        "           {\"type\" : \"YEAST\", \"name\" : \"Yeast\"}\n" +
+                        "    ],\n" +
+                        "    \"price\" : 3.5 \n" +
                         "}"));
     }
 
@@ -127,7 +139,11 @@ public class DirectorControllerTest {
                 // then
                 .andExpect(status().isCreated())
                 .andExpect(content().json("{\n" +
-                        " \"id\" : 3\n" +
+                        "    \"id\" : 3,\n" +
+                        "    \"brewerId\" : 5, \n" +
+                        "    \"beerId\" : 3, \n" +
+                        "    \"startDate\" : \"2020-03-05\",\n" +
+                        "    \"endDate\" : \"2020-05-12\" \n" +
                         "}"));
     }
 }

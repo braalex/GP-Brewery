@@ -25,35 +25,35 @@ public class DirectorController {
     private final BeerService beerService;
 
     @PostMapping(value = "/sign-in", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public IdResponse signIn(@RequestBody final UserSignInRequest request) {
+    public UserSignInResponseDto signIn(@RequestBody final UserSignInRequestDto request) {
         log.info("email = " + request.getEmail());
         return directorService.signIn(request);
     }
 
     @GetMapping(value = "/orders")
-    public List<OrderDto> getOrderList() {
-        List<OrderDto> orderList = orderService.getList();
+    public List<OrderDto> getOrders() {
+        List<OrderDto> orderList = orderService.getOrders();
         log.info("Number of beers: " + orderList.size());
         return orderList;
     }
 
     @GetMapping(value = "/brews")
-    public List<BrewDto> getBrewList() {
-        List<BrewDto> brewList = brewService.getList();
+    public List<BrewDto> getBrews() {
+        List<BrewDto> brewList = brewService.getBrews();
         log.info("Number of brews: " + brewList.size());
         return brewList;
     }
 
     @PostMapping(value = "/beers", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public IdResponse createBeer(@RequestBody final BeerDto request) {
+    public BeerDto createBeer(@RequestBody final BeerDto request) {
         log.info("New beer: " + request.getBeerName());
         return beerService.createBeer(request);
     }
 
     @PostMapping(value = "/brews", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public IdResponse createBrew(@RequestBody final BrewDto request) {
+    public BrewDto createBrew(@RequestBody final BrewDto request) {
         log.info("New brew start date: " + request.getStartDate());
         return brewService.createBrew(request);
     }

@@ -126,7 +126,10 @@ Response: `201 CREATED`
 
 ```
 {
-  "id" : 1
+  "id" : 1,
+  "email" : "craft-bar@email.com",
+  "category" : "bar",
+  "companyName" : "Craft Bar"
 }
 ```
 
@@ -147,7 +150,8 @@ Response: `200 OK`
 
 ```
 {
-  "id" : 1
+  "id" : 1,
+  "email" : "craft-bar@email.com"
 }
 ```
 
@@ -162,7 +166,7 @@ Response: `200 OK`
 ```
 [
   {
-    "beerId" : 1,
+    "id" : 1,
     "type" : "Stout",
     "beerName" : "Espresso Stout",
     "abv" : 6.1,
@@ -176,7 +180,7 @@ Response: `200 OK`
     "price" : 4.2
   },
   {
-    "beerId" : 2,
+    "id" : 2,
     "type" : "IPA",
     "beerName" : "Madness",
     "abv" : 6.6,
@@ -211,7 +215,11 @@ Response: `201 CREATED`
 
 ```
 {
-  "id" : 15
+  "id" : 15,
+  "customerId" : 1,
+  "beerId" : 1,
+  "quantity" : 100,
+  "orderDate" : "2020-02-06"
 }
 ```
 
@@ -226,7 +234,7 @@ Response: `200 OK`
 ```
 [
   {
-    "orderId" : 15,
+    "id" : 15,
     "customerId" : 1,
     "beerId" : 1,
     "quantity" : 100,
@@ -255,7 +263,11 @@ Response: `201 CREATED`
 
 ```
 {
-  "id" : 5
+  "id" : 5,
+  "email" : "ivanov123@email.com",
+  "firstName" : "Sergey",
+  "lastName" : "Ivanov",
+  "dateOfBirth" : "1982-06-11"
 }
 ```
 
@@ -276,7 +288,8 @@ Response: `200 OK`
 
 ```
 {
-  "id" : 5
+  "id" : 5,
+  "email" : "ivanov123@email.com"
 }
 ```
 
@@ -291,7 +304,7 @@ Response: `200 OK`
 ```
 [
   {
-    "brewId" : 1,
+    "id" : 1,
     "brewerId" : 5,
     "beerId" : "2,
     "startDate" : "2020-02-10",
@@ -317,7 +330,8 @@ Response: `200 OK`
 
 ```
 {
-  "id" : 1
+  "id" : 1,
+  "email" : "bigboss@email.com"
 }
 ```
 
@@ -332,14 +346,14 @@ Response: `200 OK`
 ```
 [
   {
-    "orderId" : 15,
+    "id" : 15,
     "customerId" : 1,
     "beerId" : 1,
     "quantity" : 100,
     "orderDate" : "2020-02-06"
   },
   {
-    "orderId" : 16,
+    "id" : 16,
     "customerId" : 4,
     "beerId" : 2,
     "quantity" : 150,
@@ -359,14 +373,14 @@ Response: `200 OK`
 ```
 [
   {
-    "brewId" : 1,
+    "id" : 1,
     "brewerId" : 5,
     "beerId" : 2,
     "startDate" : "2020-02-10",
     "endDate" : "2020-03-25"
   },
   {
-    "brewId" : 2,
+    "id" : 2,
     "brewerId" : 3,
     "beerId" : 1,
     "startDate" : "2020-02-20",
@@ -401,7 +415,18 @@ Response: `201 CREATED`
 
 ```
 {
-  "id" : 3
+  "id" : 3,
+  "type" : "Wheat",
+  "beerName" : "Summer",
+  "abv" : 4.5,
+  "originalGravity" : 9.0,
+  "description" : "Belgian style wheat beer",
+  "ingredients" : [
+            {"type" : "HOPS", "name" : "Zatec"},
+            {"type" : "MALT", "name" : "Wheat Malt"},
+            {"type" : "YEAST", "name" : "Yeast"},
+  ],
+  "price" : 3.5
 }
 ```
 
@@ -413,10 +438,10 @@ Request:
 
 ```  
 {
-    "brewerId" : 5,
-    "beerId" : 3,
-    "startDate" : "2020-03-05",
-    "endDate" : "2020-05-12"
+  "brewerId" : 5,
+  "beerId" : 3,
+  "startDate" : "2020-03-05",
+  "endDate" : "2020-05-12"
 }
 ```
 
@@ -424,6 +449,10 @@ Response: `201 CREATED`
 
 ```
 {
-  "id" : 3
+  "id" : 3,
+  "brewerId" : 5,
+  "beerId" : 3,
+  "startDate" : "2020-03-05",
+  "endDate" : "2020-05-12"
 }
 ```

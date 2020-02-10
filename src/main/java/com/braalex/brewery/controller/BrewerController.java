@@ -1,9 +1,6 @@
 package com.braalex.brewery.controller;
 
-import com.braalex.brewery.dto.BrewDto;
-import com.braalex.brewery.dto.BrewerSignUpRequest;
-import com.braalex.brewery.dto.IdResponse;
-import com.braalex.brewery.dto.UserSignInRequest;
+import com.braalex.brewery.dto.*;
 import com.braalex.brewery.exception.SuchUserAlreadyExistException;
 import com.braalex.brewery.service.BrewService;
 import com.braalex.brewery.service.BrewerService;
@@ -14,7 +11,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Log
 @Data
@@ -27,7 +23,7 @@ public class BrewerController {
 
     @PostMapping(value = "/sign-up", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public IdResponse signUp(@RequestBody final BrewerSignUpRequest request)
+    public BrewerSignUpResponseDto signUp(@RequestBody final BrewerSignUpRequestDto request)
             throws SuchUserAlreadyExistException {
         log.info("email = " + request.getEmail());
         log.info("DOB = " + request.getDateOfBirth());
@@ -35,17 +31,14 @@ public class BrewerController {
     }
 
     @PostMapping(value = "/sign-in", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public IdResponse signIn(@RequestBody final UserSignInRequest request) {
+    public UserSignInResponseDto signIn(@RequestBody final UserSignInRequestDto request) {
         log.info("email = " + request.getEmail());
         return brewerService.signIn(request);
     }
 
-    @GetMapping(value = "/5/brews")
-    public List<BrewDto> getList() {
-        List<BrewDto> brewList = brewService.getList()
-                .stream()
-                .filter(brew -> brew.getBrewerId() == 5)
-                .collect(Collectors.toList());
+    @GetMapping(value = "/{id}/brews")
+    public List<BrewDto> getBrews(@PathVariable final long id) {
+        List<BrewDto> brewList = brewService.getBrewsByBrewer(id);
         log.info("Start date: " + brewList.get(0).getStartDate());
         log.info("End date: " + brewList.get(0).getEndDate());
         return brewList;

@@ -34,7 +34,10 @@ public class CustomerControllerTest {
                 // then
                 .andExpect(status().isCreated())
                 .andExpect(content().json("{\n" +
-                        " \"id\" : 1\n" +
+                        " \"id\" : 1,\n" +
+                        " \"email\" : \"craft-bar@email.com\",\n" +
+                        " \"category\" : \"bar\",\n" +
+                        " \"companyName\" : \"Craft Bar\" \n" +
                         "}"));
     }
 
@@ -51,7 +54,8 @@ public class CustomerControllerTest {
                 // then
                 .andExpect(status().isOk())
                 .andExpect(content().json("{\n" +
-                        " \"id\" : 1\n" +
+                        " \"id\" : 1,\n" +
+                        " \"email\" : \"craft-bar@email.com\"\n" +
                         "}"));
     }
 
@@ -70,7 +74,11 @@ public class CustomerControllerTest {
                 // then
                 .andExpect(status().isCreated())
                 .andExpect(content().json("{\n" +
-                        " \"id\" : 15\n" +
+                        " \"id\" : 15,\n" +
+                        " \"customerId\" : 1,\n" +
+                        " \"beerId\" : 1,\n" +
+                        " \"quantity\" : 100,\n" +
+                        " \"orderDate\" : \"2020-02-06\" \n" +
                         "}"));
     }
 
@@ -83,7 +91,7 @@ public class CustomerControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().json("[\n" +
                         "  {\n" +
-                        "    \"orderId\" : 15, \n" +
+                        "    \"id\" : 15, \n" +
                         "    \"customerId\" : 1, \n" +
                         "    \"beerId\" : 1, \n" +
                         "    \"quantity\" : 100,\n" +

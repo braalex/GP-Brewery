@@ -8,7 +8,7 @@ import java.time.LocalDate;
 @Data
 @Builder
 public class BrewDto {
-    private long brewId;
+    private long id;
     private long brewerId;
     private long beerId;
     private LocalDate startDate;
