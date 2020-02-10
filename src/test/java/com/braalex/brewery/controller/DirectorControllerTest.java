@@ -7,8 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -144,6 +143,36 @@ public class DirectorControllerTest {
                         "    \"beerId\" : 3, \n" +
                         "    \"startDate\" : \"2020-03-05\",\n" +
                         "    \"endDate\" : \"2020-05-12\" \n" +
+                        "}"));
+    }
+
+    @Test
+    public void testDirectorBeerIsDeleted() throws Exception {
+        // given
+        // when
+        mockMvc.perform(delete("/director/beers/1"))
+                // then
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void testDirectorBrewIsModified() throws Exception {
+        // given
+        // when
+        mockMvc.perform(patch("/director/brews/2")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\n" +
+                        "    \"startDate\" : \"2020-03-01\",\n" +
+                        "    \"endDate\" : \"2020-05-01\" \n" +
+                        "}"))
+                // then
+                .andExpect(status().isOk())
+                .andExpect(content().json("{\n" +
+                        "    \"id\" : 2,\n" +
+                        "    \"brewerId\" : 3, \n" +
+                        "    \"beerId\" : 1, \n" +
+                        "    \"startDate\" : \"2020-03-01\",\n" +
+                        "    \"endDate\" : \"2020-05-01\" \n" +
                         "}"));
     }
 }

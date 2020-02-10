@@ -456,3 +456,36 @@ Response: `201 CREATED`
   "endDate" : "2020-05-12"
 }
 ```
+
+### GPB-14 Как "Директор" я хочу удалить из перечня сорт пива №1, чтобы сменить ассортимент
+
+Request:
+
+`DELETE /brewery-app/director/beers/1`
+
+Response: `204 NO CONTENT`
+
+### GPB-15 Как "Директор" я хочу внести изменения в варку №2, чтобы поменять даты начала и окончания варки
+
+Request:
+
+`PATCH /brewery-app/director/brews/2`
+
+```  
+{
+  "startDate" : "2020-03-01",
+  "endDate" : "2020-05-01"
+}
+```
+
+Response: `200 OK`
+
+```
+{
+  "id" : 2,
+  "brewerId" : 3,
+  "beerId" : 1,
+  "startDate" : "2020-03-01",
+  "endDate" : "2020-05-01"
+}
+```

@@ -44,4 +44,23 @@ public class BrewService {
                 .endDate(request.getEndDate())
                 .build();
     }
+
+    public BrewDto modifyBrewById(final long id, final BrewDto request) {
+        BrewDto brew = brews.stream()
+                .filter(b -> b.getId() == id)
+                .findAny().get();
+        if (request.getBrewerId() != 0) {
+            brew.setBrewerId(request.getBrewerId());
+        }
+        if (request.getBeerId() != 0) {
+            brew.setBeerId(request.getBeerId());
+        }
+        if (request.getStartDate() != null) {
+            brew.setStartDate(request.getStartDate());
+        }
+        if (request.getEndDate() != null) {
+            brew.setEndDate(request.getEndDate());
+        }
+        return brew;
+    }
 }

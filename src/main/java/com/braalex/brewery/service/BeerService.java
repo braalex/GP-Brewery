@@ -69,4 +69,7 @@ public class BeerService {
                 .price(request.getPrice())
                 .build();
     }
+
+    public void deleteBeerById(final long id) {
+    }
 }
