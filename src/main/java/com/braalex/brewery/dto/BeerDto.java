@@ -8,12 +8,12 @@ import java.util.List;
 @Data
 @Builder
 public class BeerDto {
-    private long id;
+    private Long id;
     private String type;
     private String beerName;
-    private double abv;
-    private double originalGravity;
+    private Double abv;
+    private Double originalGravity;
     private String description;
     private List<IngredientDto> ingredients;
-    private double price;
+    private Double price;
 }

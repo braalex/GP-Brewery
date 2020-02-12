@@ -1,11 +1,12 @@
 package com.braalex.brewery.dto;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserSignInResponseDto {
-    private long id;
-    private String email;
+    private String token;
 }

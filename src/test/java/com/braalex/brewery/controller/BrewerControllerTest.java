@@ -1,23 +1,23 @@
 package com.braalex.brewery.controller;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 
+import java.util.List;
+
+import static org.hamcrest.Matchers.hasLength;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-public class BrewerControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
+public class BrewerControllerTest extends AbstractControllerTest{
 
     @Test
     public void testBrewerSignUpIsCreated() throws Exception {
@@ -34,18 +34,17 @@ public class BrewerControllerTest {
                         "}"))
                 // then
                 .andExpect(status().isCreated())
-                .andExpect(content().json("{\n" +
-                        " \"id\" : 5,\n" +
-                        " \"email\" : \"ivanov123@email.com\",\n" +
-                        " \"firstName\" : \"Sergey\",\n" +
-                        " \"lastName\" : \"Ivanov\",\n" +
-                        " \"dateOfBirth\" : \"1982-06-11\" \n" +
-                        "}"));
+                .andExpect(jsonPath("token", hasLength(149)));
     }
 
     @Test
     public void testBrewerSignInIsOk() throws Exception {
         // given
+        final User user = new User("ivanov123@email.com",
+                passwordEncoder.encode("ilovebeer"),
+                List.of(new SimpleGrantedAuthority("BREWER")));
+        given(loadUserDetailService.loadUserByUsername("ivanov123@email.com"))
+                .willReturn(user);
         // when
         mockMvc.perform(post("/brewers/sign-in")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -55,17 +54,15 @@ public class BrewerControllerTest {
                         "}"))
                 // then
                 .andExpect(status().isOk())
-                .andExpect(content().json("{\n" +
-                        " \"id\" : 5,\n" +
-                        " \"email\" : \"ivanov123@email.com\"\n" +
-                        "}"));
+                .andExpect(jsonPath("token", hasLength(149)));
     }
 
     @Test
-    public void testGetBrewListIsOk() throws Exception {
+    public void testBrewerGetBrewListIsOk() throws Exception {
         // given
+        final String token = signInAsBrewer();
         // when
-        mockMvc.perform(get("/brewers/5/brews"))
+        mockMvc.perform(get("/brewers/5/brews").header("Authorization", token))
                 // then
                 .andExpect(status().isOk())
                 .andExpect(content().json("[\n" +
@@ -77,5 +74,15 @@ public class BrewerControllerTest {
                         "    \"endDate\" : \"2020-03-25\" \n" +
                         "  }\n" +
                         "]"));
+    }
+
+    @Test
+    public void testCustomerGetBrewListIsForbidden() throws Exception {
+        // given
+        final String token = signInAsCustomer();
+        // when
+        mockMvc.perform(get("/brewers/5/brews").header("Authorization", token))
+                // then
+                .andExpect(status().isForbidden());
     }
 }

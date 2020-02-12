@@ -23,10 +23,9 @@ public class CustomerController {
 
     @PostMapping(value = "/sign-up", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public CustomerSignUpResponseDto signUp(@RequestBody final CustomerSignUpRequestDto request)
+    public UserSignInResponseDto signUp(@RequestBody final CustomerSignUpRequestDto request)
             throws SuchUserAlreadyExistException {
         log.info("email = " + request.getEmail());
-        log.info("category = " + request.getCategory());
         return customerService.signUp(request);
     }
 
@@ -38,13 +37,13 @@ public class CustomerController {
 
     @PostMapping(value = "/{id}/orders", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public OrderDto createOrder(@PathVariable final long id, @RequestBody final OrderDto request) {
+    public OrderDto createOrder(@PathVariable final Long id, @RequestBody final OrderDto request) {
         log.info("Order date: " + request.getOrderDate());
         return orderService.createOrder(id, request);
     }
 
     @GetMapping(value = "/{id}/orders")
-    public List<OrderDto> getOrders(@PathVariable final long id) {
+    public List<OrderDto> getOrders(@PathVariable final Long id) {
         List<OrderDto> orderList = orderService.getOrdersByCustomer(id);
         log.info("Number of beers: " + orderList.size());
         log.info("Order date: " + orderList.get(0).getOrderDate());

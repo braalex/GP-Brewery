@@ -29,9 +29,9 @@ public class BrewService {
         return brews;
     }
 
-    public List<BrewDto> getBrewsByBrewer(final long id) {
+    public List<BrewDto> getBrewsByBrewer(final Long id) {
         return brews.stream()
-                .filter(brew -> brew.getBrewerId() == id)
+                .filter(brew -> brew.getBrewerId().equals(id))
                 .collect(Collectors.toList());
     }
 
@@ -45,14 +45,14 @@ public class BrewService {
                 .build();
     }
 
-    public BrewDto modifyBrewById(final long id, final BrewDto request) {
+    public BrewDto modifyBrewById(final Long id, final BrewDto request) {
         BrewDto brew = brews.stream()
-                .filter(b -> b.getId() == id)
+                .filter(b -> b.getId().equals(id))
                 .findAny().get();
-        if (request.getBrewerId() != 0) {
+        if (request.getBrewerId() != null) {
             brew.setBrewerId(request.getBrewerId());
         }
-        if (request.getBeerId() != 0) {
+        if (request.getBeerId() != null) {
             brew.setBeerId(request.getBeerId());
         }
         if (request.getStartDate() != null) {

@@ -17,16 +17,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/brewers")
 public class BrewerController {
-
     private final BrewerService brewerService;
     private final BrewService brewService;
 
     @PostMapping(value = "/sign-up", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public BrewerSignUpResponseDto signUp(@RequestBody final BrewerSignUpRequestDto request)
+    public UserSignInResponseDto signUp(@RequestBody final BrewerSignUpRequestDto request)
             throws SuchUserAlreadyExistException {
         log.info("email = " + request.getEmail());
-        log.info("DOB = " + request.getDateOfBirth());
         return brewerService.signUp(request);
     }
 
@@ -37,7 +35,7 @@ public class BrewerController {
     }
 
     @GetMapping(value = "/{id}/brews")
-    public List<BrewDto> getBrews(@PathVariable final long id) {
+    public List<BrewDto> getBrews(@PathVariable final Long id) {
         List<BrewDto> brewList = brewService.getBrewsByBrewer(id);
         log.info("Start date: " + brewList.get(0).getStartDate());
         log.info("End date: " + brewList.get(0).getEndDate());

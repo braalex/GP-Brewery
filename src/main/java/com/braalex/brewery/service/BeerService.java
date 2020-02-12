@@ -70,6 +70,6 @@ public class BeerService {
                 .build();
     }
 
-    public void deleteBeerById(final long id) {
+    public void deleteBeerById(final Long id) {
     }
 }

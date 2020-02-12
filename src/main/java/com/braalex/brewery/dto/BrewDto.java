@@ -8,9 +8,9 @@ import java.time.LocalDate;
 @Data
 @Builder
 public class BrewDto {
-    private long id;
-    private long brewerId;
-    private long beerId;
+    private Long id;
+    private Long brewerId;
+    private Long beerId;
     private LocalDate startDate;
     private LocalDate endDate;
 }

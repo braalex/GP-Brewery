@@ -18,7 +18,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/director")
 public class DirectorController {
-
     private final DirectorService directorService;
     private final OrderService orderService;
     private final BrewService brewService;
@@ -60,13 +59,13 @@ public class DirectorController {
 
     @DeleteMapping(value = "/beers/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteBeerById(@PathVariable long id) {
+    public void deleteBeerById(@PathVariable Long id) {
         beerService.deleteBeerById(id);
         log.info("Beer #" + id + " deleted");
     }
 
     @PatchMapping(value = "/brews/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public BrewDto modifyBrewById(@PathVariable long id, @RequestBody final BrewDto request) {
+    public BrewDto modifyBrewById(@PathVariable Long id, @RequestBody final BrewDto request) {
         log.info("Brew #" + id + " modified");
         return brewService.modifyBrewById(id, request);
     }

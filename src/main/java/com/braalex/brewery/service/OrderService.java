@@ -29,13 +29,13 @@ public class OrderService {
         return orders;
     }
 
-    public List<OrderDto> getOrdersByCustomer(final long id) {
+    public List<OrderDto> getOrdersByCustomer(final Long id) {
         return orders.stream()
-                .filter(order -> order.getCustomerId() == id)
+                .filter(order -> order.getCustomerId().equals(id))
                 .collect(Collectors.toList());
     }
 
-    public OrderDto createOrder(final long id, final OrderDto request) {
+    public OrderDto createOrder(final Long id, final OrderDto request) {
         return OrderDto.builder()
                 .id(15L)
                 .customerId(id)

@@ -1,26 +1,31 @@
 package com.braalex.brewery.controller;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 
+import java.util.List;
+
+import static org.hamcrest.Matchers.hasLength;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-public class DirectorControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
+public class DirectorControllerTest extends AbstractControllerTest {
 
     @Test
     public void testDirectorSignInIsOk() throws Exception {
         // given
+        final User user = new User("bigboss@email.com",
+                passwordEncoder.encode("secretpass"),
+                List.of(new SimpleGrantedAuthority("DIRECTOR")));
+        given(loadUserDetailService.loadUserByUsername("bigboss@email.com"))
+                .willReturn(user);
         // when
         mockMvc.perform(post("/director/sign-in")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -30,17 +35,15 @@ public class DirectorControllerTest {
                         "}"))
                 // then
                 .andExpect(status().isOk())
-                .andExpect(content().json("{\n" +
-                        " \"id\" : 1,\n" +
-                        " \"email\" : \"bigboss@email.com\"\n" +
-                        "}"));
+                .andExpect(jsonPath("token", hasLength(147)));
     }
 
     @Test
     public void testDirectorGetOrderListIsOk() throws Exception {
         // given
+        final String token = signInAsDirector();
         // when
-        mockMvc.perform(get("/director/orders"))
+        mockMvc.perform(get("/director/orders").header("Authorization", token))
                 // then
                 .andExpect(status().isOk())
                 .andExpect(content().json("[\n" +
@@ -64,8 +67,9 @@ public class DirectorControllerTest {
     @Test
     public void testDirectorGetBrewListIsOk() throws Exception {
         // given
+        final String token = signInAsDirector();
         // when
-        mockMvc.perform(get("/director/brews"))
+        mockMvc.perform(get("/director/brews").header("Authorization", token))
                 // then
                 .andExpect(status().isOk())
                 .andExpect(content().json("[\n" +
@@ -89,8 +93,9 @@ public class DirectorControllerTest {
     @Test
     public void testDirectorNewBeerIsCreated() throws Exception {
         // given
+        final String token = signInAsDirector();
         // when
-        mockMvc.perform(post("/director/beers")
+        mockMvc.perform(post("/director/beers").header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\n" +
                         "    \"type\" : \"Wheat\",\n" +
@@ -126,8 +131,9 @@ public class DirectorControllerTest {
     @Test
     public void testDirectorNewBrewIsCreated() throws Exception {
         // given
+        final String token = signInAsDirector();
         // when
-        mockMvc.perform(post("/director/brews")
+        mockMvc.perform(post("/director/brews").header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\n" +
                         "    \"brewerId\" : 5, \n" +
@@ -147,19 +153,21 @@ public class DirectorControllerTest {
     }
 
     @Test
-    public void testDirectorBeerIsDeleted() throws Exception {
+    public void testDirectorDeleteBeerIsOk() throws Exception {
         // given
+        final String token = signInAsDirector();
         // when
-        mockMvc.perform(delete("/director/beers/1"))
+        mockMvc.perform(delete("/director/beers/1").header("Authorization", token))
                 // then
                 .andExpect(status().isNoContent());
     }
 
     @Test
-    public void testDirectorBrewIsModified() throws Exception {
+    public void testDirectorModifyBrewIsOk() throws Exception {
         // given
+        final String token = signInAsDirector();
         // when
-        mockMvc.perform(patch("/director/brews/2")
+        mockMvc.perform(patch("/director/brews/2").header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\n" +
                         "    \"startDate\" : \"2020-03-01\",\n" +
@@ -174,5 +182,57 @@ public class DirectorControllerTest {
                         "    \"startDate\" : \"2020-03-01\",\n" +
                         "    \"endDate\" : \"2020-05-01\" \n" +
                         "}"));
+    }
+
+    @Test
+    public void testBrewerModifyBrewIsForbidden() throws Exception {
+        // given
+        final String token = signInAsBrewer();
+        // when
+        mockMvc.perform(patch("/director/brews/2").header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\n" +
+                        "    \"startDate\" : \"2020-03-01\",\n" +
+                        "    \"endDate\" : \"2020-05-01\" \n" +
+                        "}"))
+                // then
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void testBrewerNewBrewIsForbidden() throws Exception {
+        // given
+        final String token = signInAsBrewer();
+        // when
+        mockMvc.perform(post("/director/brews").header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\n" +
+                        "    \"brewerId\" : 5, \n" +
+                        "    \"beerId\" : 3, \n" +
+                        "    \"startDate\" : \"2020-03-05\",\n" +
+                        "    \"endDate\" : \"2020-05-12\" \n" +
+                        "}"))
+                // then
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void testCustomerGetBrewListIsForbidden() throws Exception {
+        // given
+        final String token = signInAsCustomer();
+        // when
+        mockMvc.perform(get("/director/brews").header("Authorization", token))
+                // then
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void testCustomerDeleteBeerIsForbidden() throws Exception {
+        // given
+        final String token = signInAsCustomer();
+        // when
+        mockMvc.perform(delete("/director/beers/1").header("Authorization", token))
+                // then
+                .andExpect(status().isForbidden());
     }
 }

@@ -18,7 +18,8 @@
 
 Связи:
 
-- Возможность просмотра и добавления новых варок пива ("Brew")
+- Возможность просмотра, модификации и добавления новых варок пива ("Brew")
+- Возможность просмотра, модификации и добавления новых сортов пива ("Beer")
 - Просмотр совершённых заказов ("Order")
 
 ### Brewer (Пивовар)
@@ -108,7 +109,7 @@
 
 ## User Stories
 
-### GPB-1 Как "Покупатель" я хочу зарегистрироваться в системе, и, если такого пользователя не найдено, регистрируюсь
+### GPB-1 Как "Покупатель" я хочу зарегистрироваться в системе, и, если такого пользователя не найдено, регистрируюсь и получаю JWT токен для работы в системе
 Request:
 
 `POST /brewery-app/customers/sign-up`
@@ -126,10 +127,7 @@ Response: `201 CREATED`
 
 ```
 {
-  "id" : 1,
-  "email" : "craft-bar@email.com",
-  "category" : "bar",
-  "companyName" : "Craft Bar"
+  "token" : "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ2YXN5YUBlbWFpbC5jb20iLCJleHAiOjE1Nzk5MDQ2OTksImlhdCI6MTU3OTg2ODY5OX0.8JG6O4U5F3xyOlOTyeSfl3Siim91HiJ-d4Dz5Guse8I"
 }
 ```
 
@@ -150,8 +148,7 @@ Response: `200 OK`
 
 ```
 {
-  "id" : 1,
-  "email" : "craft-bar@email.com"
+  "token" : "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ2YXN5YUBlbWFpbC5jb20iLCJleHAiOjE1Nzk5MDQ2OTksImlhdCI6MTU3OTg2ODY5OX0.8JG6O4U5F3xyOlOTyeSfl3Siim91HiJ-d4Dz5Guse8I"
 }
 ```
 
@@ -202,6 +199,9 @@ Request:
 
 `POST /brewery-app/customers/1/orders`
 
+`Headers: Authorization=Bearer 
+eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ2YXN5YUBlbWFpbC5jb20iLCJleHAiOjE1Nzk5MDQ2OTksImlhdCI6MTU3OTg2ODY5OX0.8JG6O4U5F3xyOlOTyeSfl3Siim91HiJ-d4Dz5Guse8I` 
+
 ```
 {
   "customerId" : 1,
@@ -229,6 +229,9 @@ Request:
 
 `GET /brewery-app/customers/1/orders`
 
+`Headers: Authorization=Bearer 
+eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ2YXN5YUBlbWFpbC5jb20iLCJleHAiOjE1Nzk5MDQ2OTksImlhdCI6MTU3OTg2ODY5OX0.8JG6O4U5F3xyOlOTyeSfl3Siim91HiJ-d4Dz5Guse8I` 
+
 Response: `200 OK`
 
 ```
@@ -243,7 +246,7 @@ Response: `200 OK`
 ]
 ```
 
-### GPB-6 Как "Пивовар" я хочу зарегистрироваться в системе, и, если такого пользователя не найдено, регистрируюсь
+### GPB-6 Как "Пивовар" я хочу зарегистрироваться в системе, и, если такого пользователя не найдено, регистрируюсь и получаю JWT токен для работы в системе
 
 Request:
 
@@ -263,11 +266,7 @@ Response: `201 CREATED`
 
 ```
 {
-  "id" : 5,
-  "email" : "ivanov123@email.com",
-  "firstName" : "Sergey",
-  "lastName" : "Ivanov",
-  "dateOfBirth" : "1982-06-11"
+  "token" : "eyJ0eXAiOiJKV1QiLCJh.eyJpc3MiOiJPbmxic3ViIjoiJSb2xlIjpbcm9qZWN0IEFkbWluaXN0cmF0b3IiXX0.E4yalY9LDeUIBP2qh"
 }
 ```
 
@@ -288,8 +287,7 @@ Response: `200 OK`
 
 ```
 {
-  "id" : 5,
-  "email" : "ivanov123@email.com"
+  "token" : "eyJ0eXAiOiJKV1QiLCJh.eyJpc3MiOiJPbmxic3ViIjoiJSb2xlIjpbcm9qZWN0IEFkbWluaXN0cmF0b3IiXX0.E4yalY9LDeUIBP2qh"
 }
 ```
 
@@ -298,6 +296,9 @@ Response: `200 OK`
 Request:
 
 `GET /brewery-app/brewers/5/brews`
+
+`Headers: Authorization=Bearer 
+eyJ0eXAiOiJKV1QiLCJh.eyJpc3MiOiJPbmxic3ViIjoiJSb2xlIjpbcm9qZWN0IEFkbWluaXN0cmF0b3IiXX0.E4yalY9LDeUIBP2qh` 
 
 Response: `200 OK`
 
@@ -330,8 +331,7 @@ Response: `200 OK`
 
 ```
 {
-  "id" : 1,
-  "email" : "bigboss@email.com"
+  "token" : "eyJ0eXAiOiJKV1QiLCJ.eyJpc3MiOE1MjEwOTQsImV4cCINvbSIsIkduTmFueSIsIlN1cm5hbWUiX0.8q3Ch-uGisikO1hFGFSNLY6oeUY"
 }
 ```
 
@@ -340,6 +340,9 @@ Response: `200 OK`
 Request:
 
 `GET /brewery-app/director/orders`
+
+`Headers: Authorization=Bearer 
+eyJ0eXAiOiJKV1QiLCJ.eyJpc3MiOE1MjEwOTQsImV4cCINvbSIsIkduTmFueSIsIlN1cm5hbWUiX0.8q3Ch-uGisikO1hFGFSNLY6oeUY`
 
 Response: `200 OK`
 
@@ -368,6 +371,9 @@ Request:
 
 `GET /brewery-app/director/brews`
 
+`Headers: Authorization=Bearer 
+eyJ0eXAiOiJKV1QiLCJ.eyJpc3MiOE1MjEwOTQsImV4cCINvbSIsIkduTmFueSIsIlN1cm5hbWUiX0.8q3Ch-uGisikO1hFGFSNLY6oeUY`
+
 Response: `200 OK`
 
 ```
@@ -394,6 +400,9 @@ Response: `200 OK`
 Request:
 
 `POST /brewery-app/director/beers`
+
+`Headers: Authorization=Bearer 
+eyJ0eXAiOiJKV1QiLCJ.eyJpc3MiOE1MjEwOTQsImV4cCINvbSIsIkduTmFueSIsIlN1cm5hbWUiX0.8q3Ch-uGisikO1hFGFSNLY6oeUY`
 
 ```
 {
@@ -436,6 +445,9 @@ Request:
 
 `POST /brewery-app/director/brews`
 
+`Headers: Authorization=Bearer 
+eyJ0eXAiOiJKV1QiLCJ.eyJpc3MiOE1MjEwOTQsImV4cCINvbSIsIkduTmFueSIsIlN1cm5hbWUiX0.8q3Ch-uGisikO1hFGFSNLY6oeUY`
+
 ```  
 {
   "brewerId" : 5,
@@ -463,6 +475,9 @@ Request:
 
 `DELETE /brewery-app/director/beers/1`
 
+`Headers: Authorization=Bearer 
+eyJ0eXAiOiJKV1QiLCJ.eyJpc3MiOE1MjEwOTQsImV4cCINvbSIsIkduTmFueSIsIlN1cm5hbWUiX0.8q3Ch-uGisikO1hFGFSNLY6oeUY`
+
 Response: `204 NO CONTENT`
 
 ### GPB-15 Как "Директор" я хочу внести изменения в варку №2, чтобы поменять даты начала и окончания варки
@@ -470,6 +485,9 @@ Response: `204 NO CONTENT`
 Request:
 
 `PATCH /brewery-app/director/brews/2`
+
+`Headers: Authorization=Bearer 
+eyJ0eXAiOiJKV1QiLCJ.eyJpc3MiOE1MjEwOTQsImV4cCINvbSIsIkduTmFueSIsIlN1cm5hbWUiX0.8q3Ch-uGisikO1hFGFSNLY6oeUY`
 
 ```  
 {

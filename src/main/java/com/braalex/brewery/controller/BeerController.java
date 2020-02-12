@@ -15,7 +15,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/beers")
 public class BeerController {
-
     private final BeerService beerService;
 
     @GetMapping
