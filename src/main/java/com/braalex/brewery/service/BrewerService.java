@@ -9,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,10 +23,13 @@ public class BrewerService {
 
     public UserSignInResponseDto signUp(final BrewerSignUpRequestDto request)
             throws SuchUserAlreadyExistException {
-        if (loadUserDetailService.loadUserByUsername(request.getEmail()) != null) {
-            throw new SuchUserAlreadyExistException();
+        try {
+            if (loadUserDetailService.loadUserByUsername(request.getEmail()) != null) {
+                throw new SuchUserAlreadyExistException("User with email=" + request.getEmail() + " already exists");
+            }
+        } catch (final UsernameNotFoundException e) {
+            loadUserDetailService.saveUser(request.getEmail(), request.getPassword());
         }
-        loadUserDetailService.saveUser(request.getEmail(), request.getPassword());
         return signIn(new UserSignInRequestDto(request.getEmail(), request.getPassword()));
     }
 

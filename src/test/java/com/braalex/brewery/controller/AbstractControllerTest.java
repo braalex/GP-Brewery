@@ -16,7 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
-import static org.mockito.Mockito.when;
+import static org.mockito.BDDMockito.willReturn;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -39,7 +39,7 @@ public class AbstractControllerTest {
                 passwordEncoder.encode("qwerty"),
                 List.of(new SimpleGrantedAuthority("ROLE_" + Roles.CUSTOMER.name())));
 
-        when(loadUserDetailService.loadUserByUsername("craft-bar@email.com")).thenReturn(user);
+        willReturn(user).given(loadUserDetailService).loadUserByUsername("craft-bar@email.com");
 
         final String response = mockMvc.perform(post("/customers/sign-in")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -58,7 +58,7 @@ public class AbstractControllerTest {
                 passwordEncoder.encode("ilovebeer"),
                 List.of(new SimpleGrantedAuthority("ROLE_" + Roles.BREWER.name())));
 
-        when(loadUserDetailService.loadUserByUsername("ivanov123@email.com")).thenReturn(user);
+        willReturn(user).given(loadUserDetailService).loadUserByUsername("ivanov123@email.com");
 
         final String response = mockMvc.perform(post("/brewers/sign-in")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -77,7 +77,7 @@ public class AbstractControllerTest {
                 passwordEncoder.encode("secretpass"),
                 List.of(new SimpleGrantedAuthority("ROLE_" + Roles.DIRECTOR.name())));
 
-        when(loadUserDetailService.loadUserByUsername("bigboss@email.com")).thenReturn(user);
+        willReturn(user).given(loadUserDetailService).loadUserByUsername("bigboss@email.com");
 
         final String response = mockMvc.perform(post("/director/sign-in")
                 .contentType(MediaType.APPLICATION_JSON)

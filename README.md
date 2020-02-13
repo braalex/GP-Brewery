@@ -204,7 +204,6 @@ eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ2YXN5YUBlbWFpbC5jb20iLCJleHAiOjE1Nzk5MDQ2OTksIml
 
 ```
 {
-  "customerId" : 1,
   "beerId" : 1,
   "quantity" : 100,
   "orderDate" : "2020-02-06"

@@ -22,7 +22,7 @@ public class LoadUserDetailService implements UserDetailsService {
     public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
         final String password = inMemoryUsers.get(username);
         if (password == null) {
-            return null;
+            throw new UsernameNotFoundException("User with email: " + username + " not found");
         } else {
             return new User(username, password, Collections.emptyList());
         }
