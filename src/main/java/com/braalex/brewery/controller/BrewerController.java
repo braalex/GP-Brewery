@@ -22,7 +22,7 @@ public class BrewerController {
 
     @PostMapping(value = "/sign-up", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public UserSignInResponseDto signUp(@RequestBody final BrewerSignUpRequestDto request)
+    public UserSignInResponseDto signUp(@RequestBody final StaffDto request)
             throws SuchUserAlreadyExistException {
         log.info("email = " + request.getEmail());
         return brewerService.signUp(request);

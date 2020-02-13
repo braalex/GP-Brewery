@@ -1,20 +1,21 @@
 package com.braalex.brewery.controller;
 
 import com.braalex.brewery.dto.UserSignInResponseDto;
-import com.braalex.brewery.security.LoadUserDetailService;
-import com.braalex.brewery.security.Roles;
+import com.braalex.brewery.entity.CustomerEntity;
+import com.braalex.brewery.entity.StaffEntity;
+import com.braalex.brewery.entity.UserEntity;
+import com.braalex.brewery.repository.UserRepository;
+import com.braalex.brewery.security.UserRole;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.BDDMockito.willReturn;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -31,15 +32,12 @@ public class AbstractControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @SpyBean
-    protected LoadUserDetailService loadUserDetailService;
+    @MockBean
+    protected UserRepository userRepository;
 
     protected String signInAsCustomer() throws Exception {
-        final User user = new User("craft-bar@email.com",
-                passwordEncoder.encode("qwerty"),
-                List.of(new SimpleGrantedAuthority("ROLE_" + Roles.CUSTOMER.name())));
-
-        willReturn(user).given(loadUserDetailService).loadUserByUsername("craft-bar@email.com");
+        final UserEntity user = createCustomerInfo();
+        willReturn(Optional.of(user)).given(userRepository).findByEmail("craft-bar@email.com");
 
         final String response = mockMvc.perform(post("/customers/sign-in")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -49,16 +47,20 @@ public class AbstractControllerTest {
                         "}"))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
-
         return "Bearer " + objectMapper.readValue(response, UserSignInResponseDto.class).getToken();
     }
 
-    protected String signInAsBrewer() throws Exception {
-        final User user = new User("ivanov123@email.com",
-                passwordEncoder.encode("ilovebeer"),
-                List.of(new SimpleGrantedAuthority("ROLE_" + Roles.BREWER.name())));
+    protected UserEntity createCustomerInfo() {
+        final UserEntity customer = new CustomerEntity();
+        customer.setUserRole(UserRole.CUSTOMER);
+        customer.setEmail("craft-bar@email.com");
+        customer.setPassword(passwordEncoder.encode("qwerty"));
+        return customer;
+    }
 
-        willReturn(user).given(loadUserDetailService).loadUserByUsername("ivanov123@email.com");
+    protected String signInAsBrewer() throws Exception {
+        final UserEntity user = createBrewerInfo();
+        willReturn(Optional.of(user)).given(userRepository).findByEmail("ivanov123@email.com");
 
         final String response = mockMvc.perform(post("/brewers/sign-in")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -68,16 +70,20 @@ public class AbstractControllerTest {
                         "}"))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
-
         return "Bearer " + objectMapper.readValue(response, UserSignInResponseDto.class).getToken();
     }
 
-    protected String signInAsDirector() throws Exception {
-        final User user = new User("bigboss@email.com",
-                passwordEncoder.encode("secretpass"),
-                List.of(new SimpleGrantedAuthority("ROLE_" + Roles.DIRECTOR.name())));
+    protected UserEntity createBrewerInfo() {
+        final UserEntity brewer = new StaffEntity();
+        brewer.setUserRole(UserRole.BREWER);
+        brewer.setEmail("ivanov123@email.com");
+        brewer.setPassword(passwordEncoder.encode("ilovebeer"));
+        return brewer;
+    }
 
-        willReturn(user).given(loadUserDetailService).loadUserByUsername("bigboss@email.com");
+    protected String signInAsDirector() throws Exception {
+        final UserEntity user = createDirectorInfo();
+        willReturn(Optional.of(user)).given(userRepository).findByEmail("bigboss@email.com");
 
         final String response = mockMvc.perform(post("/director/sign-in")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -87,7 +93,14 @@ public class AbstractControllerTest {
                         "}"))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
-
         return "Bearer " + objectMapper.readValue(response, UserSignInResponseDto.class).getToken();
+    }
+
+    protected UserEntity createDirectorInfo() {
+        final UserEntity director = new StaffEntity();
+        director.setUserRole(UserRole.DIRECTOR);
+        director.setEmail("bigboss@email.com");
+        director.setPassword(passwordEncoder.encode("secretpass"));
+        return director;
     }
 }

@@ -1,35 +1,42 @@
 package com.braalex.brewery.service;
 
 import com.braalex.brewery.dto.BeerDto;
+import com.braalex.brewery.mapper.BeerMapper;
+import com.braalex.brewery.repository.BeerRepository;
+import lombok.Data;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+@Data
 @Service
 public class BeerService {
-
-    private final List<BeerDto> beers = new ArrayList<>();
+    private final BeerRepository beerRepository;
+    private final BeerMapper beerMapper;
 
     public List<BeerDto> getBeers() {
-        return beers;
+        return beerRepository.findAll().stream()
+                .map(beerMapper::destinationToSource)
+                .collect(Collectors.toList());
     }
 
     public BeerDto createBeer(final BeerDto request) {
-        return null;
-//                BeerDto.builder()
-//                .id(3L)
-//                .type(request.getType())
-//                .beerName(request.getBeerName())
-//                .abv(request.getAbv())
-//                .originalGravity(request.getOriginalGravity())
-//                .description(request.getDescription())
-//                .ingredients(request.getIngredients())
-//                .price(request.getPrice())
-//                .build();
+        BeerDto beer = BeerDto.builder()
+                .type(request.getType())
+                .beerName(request.getBeerName())
+                .abv(request.getAbv())
+                .originalGravity(request.getOriginalGravity())
+                .description(request.getDescription())
+                .ingredients(request.getIngredients())
+                .price(request.getPrice())
+                .build();
+        beerRepository.save(beerMapper.sourceToDestination(beer));
+        return beer;
+
     }
 
     public void deleteBeerById(final Long id) {
-        beers.remove(id);
+        beerRepository.deleteById(id);
     }
 }

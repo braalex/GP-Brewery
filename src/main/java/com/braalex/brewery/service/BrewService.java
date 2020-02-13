@@ -1,43 +1,47 @@
 package com.braalex.brewery.service;
 
 import com.braalex.brewery.dto.BrewDto;
+import com.braalex.brewery.mapper.BrewMapper;
+import com.braalex.brewery.repository.BrewRepository;
+import lombok.Data;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Data
 @Service
 public class BrewService {
-
-    private final List<BrewDto> brews = new ArrayList<>();
+    private final BrewRepository brewRepository;
+    private final BrewMapper brewMapper;
 
     public List<BrewDto> getBrews() {
-        return brews;
+        return brewRepository.findAll().stream()
+                .map(brewMapper::destinationToSource)
+                .collect(Collectors.toList());
     }
 
     public List<BrewDto> getBrewsByBrewer(final Long id) {
-        return brews.stream()
-                .filter(brew -> brew.getBrewerId().equals(id))
+        return brewRepository.findAllByBrewerId(id).stream()
+                .map(brewMapper::destinationToSource)
                 .collect(Collectors.toList());
     }
 
     public BrewDto createBrew(final BrewDto request) {
-        return null;
-//                BrewDto.builder()
-//                .id(3L)
-//                .brewerId(request.getBrewerId())
-//                .beerId(request.getBeerId())
-//                .startDate(request.getStartDate())
-//                .endDate(request.getEndDate())
-//                .build();
+        BrewDto brew = BrewDto.builder()
+                .brewerId(request.getBrewerId())
+                .beerId(request.getBeerId())
+                .startDate(request.getStartDate())
+                .endDate(request.getEndDate())
+                .build();
+        brewRepository.save(brewMapper.sourceToDestination(brew));
+        return brew;
     }
 
-        public BrewDto modifyBrewById(final Long id, final BrewDto request) {
-        Optional<BrewDto> brew = brews.stream()
-                .filter(b -> b.getId().equals(id))
-                .findAny();
+    public BrewDto modifyBrewById(final Long id, final BrewDto request) {
+        Optional<BrewDto> brew = brewRepository.findById(id)
+                .map(brewMapper::destinationToSource);
         if (brew.isPresent()) {
             if (request.getBrewerId() != null) {
                 brew.get().setBrewerId(request.getBrewerId());

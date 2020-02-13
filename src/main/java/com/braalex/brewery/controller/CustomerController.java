@@ -23,7 +23,7 @@ public class CustomerController {
 
     @PostMapping(value = "/sign-up", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public UserSignInResponseDto signUp(@RequestBody final CustomerSignUpRequestDto request)
+    public UserSignInResponseDto signUp(@RequestBody final CustomerDto request)
             throws SuchUserAlreadyExistException {
         log.info("email = " + request.getEmail());
         return customerService.signUp(request);

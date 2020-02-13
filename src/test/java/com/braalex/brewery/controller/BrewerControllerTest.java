@@ -7,11 +7,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasLength;
 import static org.mockito.BDDMockito.willReturn;
@@ -29,6 +28,8 @@ public class BrewerControllerTest extends AbstractControllerTest{
     @Test
     public void testBrewerSignUpIsCreated() throws Exception {
         // given
+        willReturn(Optional.empty(), Optional.of(createBrewerInfo()))
+                .given(userRepository).findByEmail("ivanov123@email.com");
         // when
         mockMvc.perform(post("/brewers/sign-up")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -47,10 +48,7 @@ public class BrewerControllerTest extends AbstractControllerTest{
     @Test
     public void testBrewerSignInIsOk() throws Exception {
         // given
-        final User user = new User("ivanov123@email.com",
-                passwordEncoder.encode("ilovebeer"),
-                List.of(new SimpleGrantedAuthority("BREWER")));
-        willReturn(user).given(loadUserDetailService).loadUserByUsername("ivanov123@email.com");
+        signInAsBrewer();
         // when
         mockMvc.perform(post("/brewers/sign-in")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -66,10 +64,7 @@ public class BrewerControllerTest extends AbstractControllerTest{
     @Test
     public void testBrewerSignInWithWrongEmail() throws Exception {
         // given
-        final User user = new User("ivanov123@email.com",
-                passwordEncoder.encode("ilovebeer"),
-                List.of(new SimpleGrantedAuthority("BREWER")));
-        willReturn(user).given(loadUserDetailService).loadUserByUsername("ivanov123@email.com");
+        signInAsBrewer();
         // when
         mockMvc.perform(post("/brewers/sign-in")
                 .contentType(MediaType.APPLICATION_JSON)

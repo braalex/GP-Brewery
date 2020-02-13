@@ -1,19 +1,21 @@
 package com.braalex.brewery.controller;
 
 import com.braalex.brewery.dto.*;
+import com.braalex.brewery.mapper.BeerMapper;
+import com.braalex.brewery.repository.BeerRepository;
 import com.braalex.brewery.service.BeerService;
 import com.braalex.brewery.service.BrewService;
 import com.braalex.brewery.service.OrderService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasLength;
 import static org.mockito.BDDMockito.willReturn;
@@ -30,14 +32,35 @@ public class DirectorControllerTest extends AbstractControllerTest {
     private OrderService orderService;
     @SpyBean
     private BeerService beerService;
+    @MockBean
+    private BeerRepository beerRepository;
+    @MockBean
+    private BeerMapper beerMapper;
+
+    @Test
+    public void testDirectorSignUpIsCreated() throws Exception {
+        // given
+        willReturn(Optional.empty(), Optional.of(createDirectorInfo()))
+                .given(userRepository).findByEmail("bigboss@email.com");
+        // when
+        mockMvc.perform(post("/director/sign-up")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\n" +
+                        " \"email\" : \"bigboss@email.com\",\n" +
+                        " \"password\" : \"secretpass\",\n" +
+                        " \"firstName\" : \"Anton\",\n" +
+                        " \"lastName\" : \"Pivovarov\",\n" +
+                        " \"dateOfBirth\" : \"1985-02-20\" \n" +
+                        "}"))
+                // then
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("token", hasLength(147)));
+    }
 
     @Test
     public void testDirectorSignInIsOk() throws Exception {
         // given
-        final User user = new User("bigboss@email.com",
-                passwordEncoder.encode("secretpass"),
-                List.of(new SimpleGrantedAuthority("DIRECTOR")));
-        willReturn(user).given(loadUserDetailService).loadUserByUsername("bigboss@email.com");
+        signInAsDirector();
         // when
         mockMvc.perform(post("/director/sign-in")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -53,10 +76,7 @@ public class DirectorControllerTest extends AbstractControllerTest {
     @Test
     public void testDirectorSignInWithWrongPassword() throws Exception {
         // given
-        final User user = new User("bigboss@email.com",
-                passwordEncoder.encode("secretpass"),
-                List.of(new SimpleGrantedAuthority("DIRECTOR")));
-        willReturn(user).given(loadUserDetailService).loadUserByUsername("bigboss@email.com");
+        signInAsDirector();
         // when
         mockMvc.perform(post("/director/sign-in")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -270,6 +290,27 @@ public class DirectorControllerTest extends AbstractControllerTest {
     public void testDirectorDeleteBeerIsOk() throws Exception {
         // given
         final String token = signInAsDirector();
+        beerRepository.save(beerMapper.sourceToDestination(BeerDto.builder()
+                .id(1L)
+                .type("Stout")
+                .beerName("Espresso Stout")
+                .abv(6.1)
+                .originalGravity(14.0)
+                .description("Coffee stout")
+                .ingredients(List.of(IngredientDto.builder()
+                                .type(IngredientType.HOPS)
+                                .name("Magnum")
+                                .build(),
+                        IngredientDto.builder()
+                                .type(IngredientType.MALT)
+                                .name("Brown Malt")
+                                .build(),
+                        IngredientDto.builder()
+                                .type(IngredientType.YEAST)
+                                .name("Ale Yeast")
+                                .build()))
+                .price(4.2)
+                .build()));
         // when
         mockMvc.perform(delete("/director/beers/1").header("Authorization", token))
                 // then

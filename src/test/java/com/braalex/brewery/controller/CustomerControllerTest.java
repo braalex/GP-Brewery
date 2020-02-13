@@ -7,11 +7,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasLength;
 import static org.mockito.BDDMockito.willReturn;
@@ -29,6 +28,8 @@ public class CustomerControllerTest extends AbstractControllerTest {
     @Test
     public void testCustomerSignUpIsCreated() throws Exception {
         // given
+        willReturn(Optional.empty(), Optional.of(createCustomerInfo()))
+                .given(userRepository).findByEmail("craft-bar@email.com");
         // when
         mockMvc.perform(post("/customers/sign-up")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -63,10 +64,7 @@ public class CustomerControllerTest extends AbstractControllerTest {
     @Test
     public void testCustomerSignInIsOk() throws Exception {
         // given
-        final User user = new User("craft-bar@email.com",
-                passwordEncoder.encode("qwerty"),
-                List.of(new SimpleGrantedAuthority("CUSTOMER")));
-        willReturn(user).given(loadUserDetailService).loadUserByUsername("craft-bar@email.com");
+        signInAsCustomer();
         // when
         mockMvc.perform(post("/customers/sign-in")
                 .contentType(MediaType.APPLICATION_JSON)

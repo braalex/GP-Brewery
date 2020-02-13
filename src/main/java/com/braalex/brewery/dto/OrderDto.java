@@ -11,6 +11,6 @@ public class OrderDto {
     private Long id;
     private Long customerId;
     private Long beerId;
-    private int quantity;
+    private Integer quantity;
     private LocalDate orderDate;
 }

@@ -1,6 +1,7 @@
 package com.braalex.brewery.controller;
 
 import com.braalex.brewery.dto.*;
+import com.braalex.brewery.exception.SuchUserAlreadyExistException;
 import com.braalex.brewery.service.BeerService;
 import com.braalex.brewery.service.BrewService;
 import com.braalex.brewery.service.DirectorService;
@@ -22,6 +23,14 @@ public class DirectorController {
     private final OrderService orderService;
     private final BrewService brewService;
     private final BeerService beerService;
+
+    @PostMapping(value = "/sign-up", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    public UserSignInResponseDto signUp(@RequestBody final StaffDto request)
+            throws SuchUserAlreadyExistException {
+        log.info("email = " + request.getEmail());
+        return directorService.signUp(request);
+    }
 
     @PostMapping(value = "/sign-in", consumes = MediaType.APPLICATION_JSON_VALUE)
     public UserSignInResponseDto signIn(@RequestBody final UserSignInRequestDto request) {

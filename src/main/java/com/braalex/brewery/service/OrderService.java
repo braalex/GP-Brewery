@@ -1,35 +1,40 @@
 package com.braalex.brewery.service;
 
 import com.braalex.brewery.dto.OrderDto;
+import com.braalex.brewery.mapper.OrderMapper;
+import com.braalex.brewery.repository.OrderRepository;
+import lombok.Data;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Data
 @Service
 public class OrderService {
-
-    private final List<OrderDto> orders = new ArrayList<>();
+    private final OrderRepository orderRepository;
+    private final OrderMapper orderMapper;
 
     public List<OrderDto> getOrders() {
-        return orders;
+        return orderRepository.findAll().stream()
+                .map(orderMapper::destinationToSource)
+                .collect(Collectors.toList());
     }
 
     public List<OrderDto> getOrdersByCustomer(final Long id) {
-        return orders.stream()
-                .filter(order -> order.getCustomerId().equals(id))
+        return orderRepository.findAllByCustomerId(id).stream()
+                .map(orderMapper::destinationToSource)
                 .collect(Collectors.toList());
     }
 
     public OrderDto createOrder(final Long id, final OrderDto request) {
-        return null;
-//                OrderDto.builder()
-//                .id(15L)
-//                .customerId(id)
-//                .beerId(request.getBeerId())
-//                .quantity(request.getQuantity())
-//                .orderDate(request.getOrderDate())
-//                .build();
+        OrderDto order = OrderDto.builder()
+                .customerId(id)
+                .beerId(request.getBeerId())
+                .quantity(request.getQuantity())
+                .orderDate(request.getOrderDate())
+                .build();
+        orderRepository.save(orderMapper.sourceToDestination(order));
+        return order;
     }
 }

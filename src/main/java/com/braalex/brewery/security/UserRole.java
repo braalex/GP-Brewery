@@ -1,5 +1,5 @@
 package com.braalex.brewery.security;
 
-public enum Roles {
+public enum UserRole {
     DIRECTOR, CUSTOMER, BREWER
 }
