@@ -1,6 +1,6 @@
 package com.braalex.brewery.controller;
 
-import com.braalex.brewery.dto.BrewDto;
+import com.braalex.brewery.mock.BrewControllerMockData;
 import com.braalex.brewery.service.BrewService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -8,8 +8,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.MediaType;
 
-import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasLength;
@@ -80,13 +78,7 @@ public class BrewerControllerTest extends AbstractControllerTest{
     public void testBrewerGetBrewListIsOk() throws Exception {
         // given
         final String token = signInAsBrewer();
-        willReturn(List.of(BrewDto.builder()
-                        .id(1L)
-                        .brewerId(5L)
-                        .beerId(2L)
-                        .startDate(LocalDate.of(2020, 2, 10))
-                        .endDate(LocalDate.of(2020, 3, 25))
-                        .build()))
+        willReturn(BrewControllerMockData.getBrewListByBrewer())
                 .given(brewService).getBrewsByBrewer(5L);
         // when
         mockMvc.perform(get("/brewers/5/brews").header("Authorization", token))

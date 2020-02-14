@@ -2,7 +2,7 @@ package com.braalex.brewery.controller;
 
 import com.braalex.brewery.dto.BeerDto;
 import com.braalex.brewery.service.BeerService;
-import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @Log
-@Data
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/beers")
 public class BeerController {

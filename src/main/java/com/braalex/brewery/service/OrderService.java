@@ -3,14 +3,14 @@ package com.braalex.brewery.service;
 import com.braalex.brewery.dto.OrderDto;
 import com.braalex.brewery.mapper.OrderMapper;
 import com.braalex.brewery.repository.OrderRepository;
-import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Data
 @Service
+@RequiredArgsConstructor
 public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;

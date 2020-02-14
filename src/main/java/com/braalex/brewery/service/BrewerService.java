@@ -9,7 +9,7 @@ import com.braalex.brewery.mapper.StaffMapper;
 import com.braalex.brewery.repository.UserRepository;
 import com.braalex.brewery.security.JwtUtil;
 import com.braalex.brewery.security.UserRole;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -21,7 +21,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class BrewerService {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;

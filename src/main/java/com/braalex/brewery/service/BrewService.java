@@ -3,15 +3,15 @@ package com.braalex.brewery.service;
 import com.braalex.brewery.dto.BrewDto;
 import com.braalex.brewery.mapper.BrewMapper;
 import com.braalex.brewery.repository.BrewRepository;
-import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Data
 @Service
+@RequiredArgsConstructor
 public class BrewService {
     private final BrewRepository brewRepository;
     private final BrewMapper brewMapper;

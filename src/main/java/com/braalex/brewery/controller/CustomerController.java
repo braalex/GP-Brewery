@@ -4,7 +4,7 @@ import com.braalex.brewery.dto.*;
 import com.braalex.brewery.exception.SuchUserAlreadyExistException;
 import com.braalex.brewery.service.CustomerService;
 import com.braalex.brewery.service.OrderService;
-import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Log
-@Data
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/customers")
 public class CustomerController {

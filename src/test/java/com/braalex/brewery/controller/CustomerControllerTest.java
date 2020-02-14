@@ -1,6 +1,6 @@
 package com.braalex.brewery.controller;
 
-import com.braalex.brewery.dto.OrderDto;
+import com.braalex.brewery.mock.OrderControllerMockData;
 import com.braalex.brewery.service.OrderService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -8,8 +8,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.MediaType;
 
-import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasLength;
@@ -81,18 +79,8 @@ public class CustomerControllerTest extends AbstractControllerTest {
     public void testCustomerNewOrderIsCreated() throws Exception {
         // given
         final String token = signInAsCustomer();
-        willReturn(OrderDto.builder()
-                .id(15L)
-                .customerId(1L)
-                .beerId(1L)
-                .quantity(100)
-                .orderDate(LocalDate.of(2020, 2, 6))
-                .build())
-                .given(orderService).createOrder(1L, OrderDto.builder()
-                .beerId(1L)
-                .quantity(100)
-                .orderDate(LocalDate.of(2020, 2, 6))
-                .build());
+        willReturn(OrderControllerMockData.getNewOrder())
+                .given(orderService).createOrder(1L, OrderControllerMockData.postNewOrder());
         // when
         mockMvc.perform(post("/customers/1/orders").header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -116,13 +104,7 @@ public class CustomerControllerTest extends AbstractControllerTest {
     public void testCustomerGetOrderListIsOk() throws Exception {
         // given
         final String token = signInAsCustomer();
-        willReturn(List.of(OrderDto.builder()
-                        .id(15L)
-                        .customerId(1L)
-                        .beerId(1L)
-                        .quantity(100)
-                        .orderDate(LocalDate.of(2020, 2, 6))
-                        .build()))
+        willReturn(OrderControllerMockData.getOrderListByCustomer())
                 .given(orderService).getOrdersByCustomer(1L);
         // when
         mockMvc.perform(get("/customers/1/orders").header("Authorization", token))

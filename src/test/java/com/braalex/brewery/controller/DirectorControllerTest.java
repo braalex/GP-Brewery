@@ -1,7 +1,9 @@
 package com.braalex.brewery.controller;
 
-import com.braalex.brewery.dto.*;
 import com.braalex.brewery.mapper.BeerMapper;
+import com.braalex.brewery.mock.BeerControllerMockData;
+import com.braalex.brewery.mock.BrewControllerMockData;
+import com.braalex.brewery.mock.OrderControllerMockData;
 import com.braalex.brewery.repository.BeerRepository;
 import com.braalex.brewery.service.BeerService;
 import com.braalex.brewery.service.BrewService;
@@ -13,8 +15,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.MediaType;
 
-import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasLength;
@@ -92,20 +92,7 @@ public class DirectorControllerTest extends AbstractControllerTest {
     public void testDirectorGetOrderListIsOk() throws Exception {
         // given
         final String token = signInAsDirector();
-        willReturn(List.of(OrderDto.builder()
-                        .id(15L)
-                        .customerId(1L)
-                        .beerId(1L)
-                        .quantity(100)
-                        .orderDate(LocalDate.of(2020, 2, 6))
-                        .build(),
-                OrderDto.builder()
-                        .id(16L)
-                        .customerId(4L)
-                        .beerId(2L)
-                        .quantity(150)
-                        .orderDate(LocalDate.of(2020, 2, 7))
-                        .build()))
+        willReturn(OrderControllerMockData.getOrderList())
                 .given(orderService).getOrders();
         // when
         mockMvc.perform(get("/director/orders").header("Authorization", token))
@@ -133,20 +120,7 @@ public class DirectorControllerTest extends AbstractControllerTest {
     public void testDirectorGetBrewListIsOk() throws Exception {
         // given
         final String token = signInAsDirector();
-        willReturn(List.of(BrewDto.builder()
-                        .id(1L)
-                        .brewerId(5L)
-                        .beerId(2L)
-                        .startDate(LocalDate.of(2020, 2, 10))
-                        .endDate(LocalDate.of(2020, 3, 25))
-                        .build(),
-                BrewDto.builder()
-                        .id(2L)
-                        .brewerId(3L)
-                        .beerId(1L)
-                        .startDate(LocalDate.of(2020, 2, 20))
-                        .endDate(LocalDate.of(2020, 4, 20))
-                        .build()))
+        willReturn(BrewControllerMockData.getBrewList())
                 .given(brewService).getBrews();
         // when
         mockMvc.perform(get("/director/brews").header("Authorization", token))
@@ -174,47 +148,8 @@ public class DirectorControllerTest extends AbstractControllerTest {
     public void testDirectorNewBeerIsCreated() throws Exception {
         // given
         final String token = signInAsDirector();
-        willReturn(BeerDto.builder()
-                .id(3L)
-                .type("Wheat")
-                .beerName("Summer")
-                .abv(4.5)
-                .originalGravity(9.0)
-                .description("Belgian style wheat beer")
-                .ingredients(List.of(IngredientDto.builder()
-                                .type(IngredientType.HOPS)
-                                .name("Zatec")
-                                .build(),
-                        IngredientDto.builder()
-                                .type(IngredientType.MALT)
-                                .name("Wheat Malt")
-                                .build(),
-                        IngredientDto.builder()
-                                .type(IngredientType.YEAST)
-                                .name("Yeast")
-                                .build()))
-                .price(3.5)
-                .build())
-                .given(beerService).createBeer(BeerDto.builder()
-                .type("Wheat")
-                .beerName("Summer")
-                .abv(4.5)
-                .originalGravity(9.0)
-                .description("Belgian style wheat beer")
-                .ingredients(List.of(IngredientDto.builder()
-                                .type(IngredientType.HOPS)
-                                .name("Zatec")
-                                .build(),
-                        IngredientDto.builder()
-                                .type(IngredientType.MALT)
-                                .name("Wheat Malt")
-                                .build(),
-                        IngredientDto.builder()
-                                .type(IngredientType.YEAST)
-                                .name("Yeast")
-                                .build()))
-                .price(3.5)
-                .build());
+        willReturn(BeerControllerMockData.getNewBeer())
+                .given(beerService).createBeer(BeerControllerMockData.postNewBeer());
         // when
         mockMvc.perform(post("/director/beers").header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -253,19 +188,8 @@ public class DirectorControllerTest extends AbstractControllerTest {
     public void testDirectorNewBrewIsCreated() throws Exception {
         // given
         final String token = signInAsDirector();
-        willReturn(BrewDto.builder()
-                .id(3L)
-                .brewerId(5L)
-                .beerId(3L)
-                .startDate(LocalDate.of(2020, 3, 5))
-                .endDate(LocalDate.of(2020, 5, 12))
-                .build())
-                .given(brewService).createBrew(BrewDto.builder()
-                .brewerId(5L)
-                .beerId(3L)
-                .startDate(LocalDate.of(2020, 3, 5))
-                .endDate(LocalDate.of(2020, 5, 12))
-                .build());
+        willReturn(BrewControllerMockData.getNewBrew())
+                .given(brewService).createBrew(BrewControllerMockData.postNewBrew());
         // when
         mockMvc.perform(post("/director/brews").header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -290,27 +214,7 @@ public class DirectorControllerTest extends AbstractControllerTest {
     public void testDirectorDeleteBeerIsOk() throws Exception {
         // given
         final String token = signInAsDirector();
-        beerRepository.save(beerMapper.sourceToDestination(BeerDto.builder()
-                .id(1L)
-                .type("Stout")
-                .beerName("Espresso Stout")
-                .abv(6.1)
-                .originalGravity(14.0)
-                .description("Coffee stout")
-                .ingredients(List.of(IngredientDto.builder()
-                                .type(IngredientType.HOPS)
-                                .name("Magnum")
-                                .build(),
-                        IngredientDto.builder()
-                                .type(IngredientType.MALT)
-                                .name("Brown Malt")
-                                .build(),
-                        IngredientDto.builder()
-                                .type(IngredientType.YEAST)
-                                .name("Ale Yeast")
-                                .build()))
-                .price(4.2)
-                .build()));
+        beerRepository.save(beerMapper.sourceToDestination(BeerControllerMockData.getBeer()));
         // when
         mockMvc.perform(delete("/director/beers/1").header("Authorization", token))
                 // then
@@ -321,19 +225,8 @@ public class DirectorControllerTest extends AbstractControllerTest {
     public void testDirectorModifyBrewIsOk() throws Exception {
         // given
         final String token = signInAsDirector();
-        willReturn(BrewDto.builder()
-                .id(2L)
-                .brewerId(3L)
-                .beerId(1L)
-                .startDate(LocalDate.of(2020, 3, 1))
-                .endDate(LocalDate.of(2020, 5, 1))
-                .build())
-                .given(brewService).modifyBrewById(2L, BrewDto.builder()
-                .brewerId(null)
-                .beerId(null)
-                .startDate(LocalDate.of(2020, 3, 1))
-                .endDate(LocalDate.of(2020, 5, 1))
-                .build());
+        willReturn(BrewControllerMockData.getBrew())
+                .given(brewService).modifyBrewById(2L, BrewControllerMockData.getBrewForModifying());
         // when
         mockMvc.perform(patch("/director/brews/2").header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON)
