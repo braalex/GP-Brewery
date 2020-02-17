@@ -1,7 +1,7 @@
 package com.braalex.brewery.security;
 
-import com.braalex.brewery.entity.UserEntity;
-import com.braalex.brewery.repository.UserRepository;
+import com.braalex.brewery.entity.AuthInfoEntity;
+import com.braalex.brewery.repository.AuthInfoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -16,17 +16,17 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class LoadUserDetailService implements UserDetailsService {
-    private final UserRepository userRepository;
+    private final AuthInfoRepository authInfoRepository;
 
     @Override
     public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
-        final Optional<UserEntity> userEntity = userRepository.findByEmail(username);
-        if (userEntity.isEmpty()) {
+        final Optional<AuthInfoEntity> authInfoEntity = authInfoRepository.findByLogin(username);
+        if (authInfoEntity.isEmpty()) {
             throw new UsernameNotFoundException("User with email: " + username + " not found");
         } else {
             final SimpleGrantedAuthority authority = new SimpleGrantedAuthority(
-                    "ROLE_" + userEntity.get().getUserRole().name());
-            return new User(username, userEntity.get().getPassword(), List.of(authority));
+                    "ROLE_" + authInfoEntity.get().getUser().getUserRole().name());
+            return new User(username, authInfoEntity.get().getPassword(), List.of(authority));
         }
     }
 }

@@ -7,7 +7,7 @@ import java.util.List;
 
 public class BrewControllerMockData {
 
-    public static List<BrewDto> getBrewListByBrewer() {
+    public static List<BrewDto> getBrewsByBrewer() {
         return List.of(BrewDto.builder()
                 .id(1L)
                 .brewerId(5L)

@@ -8,12 +8,7 @@ import java.time.LocalDate;
 @Data
 @Table(name = "order")
 @Entity
-public class OrderEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+public class OrderEntity extends BaseEntity {
     private Long customerId;
     private Long beerId;
     private Integer quantity;

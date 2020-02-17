@@ -8,17 +8,8 @@ import javax.persistence.*;
 @Data
 @Table(name = "ingredient")
 @Entity
-public class IngredientEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
-
+public class IngredientEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
-    @Column(name = "type")
     private IngredientType type;
-
-    @Column(name = "name")
     private String name;
 }

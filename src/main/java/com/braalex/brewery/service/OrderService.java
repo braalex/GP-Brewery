@@ -21,18 +21,18 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
-    public List<OrderDto> getOrdersByCustomer(final Long id) {
+    public List<OrderDto> getOrdersByCustomerId(final Long id) {
         return orderRepository.findAllByCustomerId(id).stream()
                 .map(orderMapper::destinationToSource)
                 .collect(Collectors.toList());
     }
 
-    public OrderDto createOrder(final Long id, final OrderDto request) {
-        OrderDto order = OrderDto.builder()
+    public OrderDto createOrder(final Long id, final OrderDto orderDtoRequest) {
+        final OrderDto order = OrderDto.builder()
                 .customerId(id)
-                .beerId(request.getBeerId())
-                .quantity(request.getQuantity())
-                .orderDate(request.getOrderDate())
+                .beerId(orderDtoRequest.getBeerId())
+                .quantity(orderDtoRequest.getQuantity())
+                .orderDate(orderDtoRequest.getOrderDate())
                 .build();
         orderRepository.save(orderMapper.sourceToDestination(order));
         return order;

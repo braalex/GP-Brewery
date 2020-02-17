@@ -3,9 +3,11 @@ package com.braalex.brewery.service;
 import com.braalex.brewery.dto.StaffDto;
 import com.braalex.brewery.dto.UserSignInRequestDto;
 import com.braalex.brewery.dto.UserSignInResponseDto;
+import com.braalex.brewery.entity.AuthInfoEntity;
 import com.braalex.brewery.entity.UserEntity;
 import com.braalex.brewery.exception.SuchUserAlreadyExistException;
 import com.braalex.brewery.mapper.StaffMapper;
+import com.braalex.brewery.repository.AuthInfoRepository;
 import com.braalex.brewery.repository.UserRepository;
 import com.braalex.brewery.security.JwtUtil;
 import com.braalex.brewery.security.UserRole;
@@ -28,31 +30,39 @@ public class BrewerService {
     private final UserRepository userRepository;
     private final StaffMapper staffMapper;
     private final PasswordEncoder passwordEncoder;
+    private final AuthInfoRepository authInfoRepository;
 
     @Transactional
-    public UserSignInResponseDto signUp(final StaffDto request)
+    public UserSignInResponseDto signUp(final StaffDto staffDtoRequest)
             throws SuchUserAlreadyExistException {
-        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new SuchUserAlreadyExistException("User with email=" + request.getEmail() + " already exists");
+        if (authInfoRepository.findByLogin(staffDtoRequest.getEmail()).isPresent()) {
+            throw new SuchUserAlreadyExistException("User with email=" + staffDtoRequest.getEmail() + " already exists");
         }
-        saveUser(request);
-        return signIn(new UserSignInRequestDto(request.getEmail(), request.getPassword()));
+        saveUser(staffDtoRequest);
+        return signIn(new UserSignInRequestDto(staffDtoRequest.getEmail(), staffDtoRequest.getPassword()));
     }
 
-    private void saveUser(final StaffDto request) {
-        final UserEntity userEntity = staffMapper.sourceToDestination(request);
+    private void saveUser(final StaffDto staffDtoRequest) {
+        final UserEntity userEntity = staffMapper.sourceToDestination(staffDtoRequest);
         userEntity.setUserRole(UserRole.BREWER);
-        userEntity.setEmail(request.getEmail());
-        userEntity.setPassword(passwordEncoder.encode(request.getPassword()));
-        userRepository.save(userEntity);
+        final UserEntity savedUser = userRepository.save(userEntity);
+        saveAuthInfo(staffDtoRequest, savedUser);
     }
 
-    public UserSignInResponseDto signIn(final UserSignInRequestDto request) {
+    private void saveAuthInfo(final StaffDto staffDtoRequest, final UserEntity savedUser) {
+        final AuthInfoEntity authInfoEntity = new AuthInfoEntity();
+        authInfoEntity.setLogin(staffDtoRequest.getEmail());
+        authInfoEntity.setPassword(passwordEncoder.encode(staffDtoRequest.getPassword()));
+        authInfoEntity.setUser(savedUser);
+        authInfoRepository.save(authInfoEntity);
+    }
+
+    public UserSignInResponseDto signIn(final UserSignInRequestDto userSignInRequest) {
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+                new UsernamePasswordAuthenticationToken(userSignInRequest.getEmail(), userSignInRequest.getPassword()));
         return new UserSignInResponseDto(jwtUtil.generateToken(
-                new User(request.getEmail(),
-                        request.getPassword(),
+                new User(userSignInRequest.getEmail(),
+                        userSignInRequest.getPassword(),
                         List.of(new SimpleGrantedAuthority("BREWER")))));
     }
 }

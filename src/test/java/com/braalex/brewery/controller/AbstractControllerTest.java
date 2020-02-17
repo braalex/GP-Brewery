@@ -1,9 +1,11 @@
 package com.braalex.brewery.controller;
 
 import com.braalex.brewery.dto.UserSignInResponseDto;
+import com.braalex.brewery.entity.AuthInfoEntity;
 import com.braalex.brewery.entity.CustomerEntity;
 import com.braalex.brewery.entity.StaffEntity;
 import com.braalex.brewery.entity.UserEntity;
+import com.braalex.brewery.repository.AuthInfoRepository;
 import com.braalex.brewery.repository.UserRepository;
 import com.braalex.brewery.security.UserRole;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-public class AbstractControllerTest {
+public abstract class AbstractControllerTest {
 
     @Autowired
     protected MockMvc mockMvc;
@@ -33,11 +35,13 @@ public class AbstractControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
+    protected AuthInfoRepository authInfoRepository;
+    @MockBean
     protected UserRepository userRepository;
 
     protected String signInAsCustomer() throws Exception {
-        final UserEntity user = createCustomerInfo();
-        willReturn(Optional.of(user)).given(userRepository).findByEmail("craft-bar@email.com");
+        final AuthInfoEntity authInfo = createCustomerAuthInfo();
+        willReturn(Optional.of(authInfo)).given(authInfoRepository).findByLogin("craft-bar@email.com");
 
         final String response = mockMvc.perform(post("/customers/sign-in")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -50,17 +54,21 @@ public class AbstractControllerTest {
         return "Bearer " + objectMapper.readValue(response, UserSignInResponseDto.class).getToken();
     }
 
-    protected UserEntity createCustomerInfo() {
+    protected AuthInfoEntity createCustomerAuthInfo() {
         final UserEntity customer = new CustomerEntity();
         customer.setUserRole(UserRole.CUSTOMER);
         customer.setEmail("craft-bar@email.com");
-        customer.setPassword(passwordEncoder.encode("qwerty"));
-        return customer;
+
+        final AuthInfoEntity customerAuthInfo = new AuthInfoEntity();
+        customerAuthInfo.setLogin(customer.getEmail());
+        customerAuthInfo.setPassword(passwordEncoder.encode("qwerty"));
+        customerAuthInfo.setUser(customer);
+        return customerAuthInfo;
     }
 
     protected String signInAsBrewer() throws Exception {
-        final UserEntity user = createBrewerInfo();
-        willReturn(Optional.of(user)).given(userRepository).findByEmail("ivanov123@email.com");
+        final AuthInfoEntity authInfo = createBrewerAuthInfo();
+        willReturn(Optional.of(authInfo)).given(authInfoRepository).findByLogin("ivanov123@email.com");
 
         final String response = mockMvc.perform(post("/brewers/sign-in")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -73,17 +81,21 @@ public class AbstractControllerTest {
         return "Bearer " + objectMapper.readValue(response, UserSignInResponseDto.class).getToken();
     }
 
-    protected UserEntity createBrewerInfo() {
+    protected AuthInfoEntity createBrewerAuthInfo() {
         final UserEntity brewer = new StaffEntity();
         brewer.setUserRole(UserRole.BREWER);
         brewer.setEmail("ivanov123@email.com");
-        brewer.setPassword(passwordEncoder.encode("ilovebeer"));
-        return brewer;
+
+        final AuthInfoEntity brewerAuthInfo = new AuthInfoEntity();
+        brewerAuthInfo.setLogin(brewer.getEmail());
+        brewerAuthInfo.setPassword(passwordEncoder.encode("ilovebeer"));
+        brewerAuthInfo.setUser(brewer);
+        return brewerAuthInfo;
     }
 
     protected String signInAsDirector() throws Exception {
-        final UserEntity user = createDirectorInfo();
-        willReturn(Optional.of(user)).given(userRepository).findByEmail("bigboss@email.com");
+        final AuthInfoEntity authInfo = createDirectorAuthInfo();
+        willReturn(Optional.of(authInfo)).given(authInfoRepository).findByLogin( "bigboss@email.com");
 
         final String response = mockMvc.perform(post("/director/sign-in")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -96,11 +108,15 @@ public class AbstractControllerTest {
         return "Bearer " + objectMapper.readValue(response, UserSignInResponseDto.class).getToken();
     }
 
-    protected UserEntity createDirectorInfo() {
+    protected AuthInfoEntity createDirectorAuthInfo() {
         final UserEntity director = new StaffEntity();
         director.setUserRole(UserRole.DIRECTOR);
         director.setEmail("bigboss@email.com");
-        director.setPassword(passwordEncoder.encode("secretpass"));
-        return director;
+
+        final AuthInfoEntity directorAuthInfo = new AuthInfoEntity();
+        directorAuthInfo.setLogin(director.getEmail());
+        directorAuthInfo.setPassword(passwordEncoder.encode("secretpass"));
+        directorAuthInfo.setUser(director);
+        return directorAuthInfo;
     }
 }

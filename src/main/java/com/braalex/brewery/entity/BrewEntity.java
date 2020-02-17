@@ -8,11 +8,7 @@ import java.time.LocalDate;
 @Data
 @Table(name = "brew")
 @Entity
-public class BrewEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class BrewEntity extends BaseEntity {
     private Long brewerId;
     private Long beerId;
     private LocalDate startDate;

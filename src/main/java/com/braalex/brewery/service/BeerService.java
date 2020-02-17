@@ -21,15 +21,15 @@ public class BeerService {
                 .collect(Collectors.toList());
     }
 
-    public BeerDto createBeer(final BeerDto request) {
-        BeerDto beer = BeerDto.builder()
-                .type(request.getType())
-                .beerName(request.getBeerName())
-                .abv(request.getAbv())
-                .originalGravity(request.getOriginalGravity())
-                .description(request.getDescription())
-                .ingredients(request.getIngredients())
-                .price(request.getPrice())
+    public BeerDto createBeer(final BeerDto beerDtoRequest) {
+        final BeerDto beer = BeerDto.builder()
+                .type(beerDtoRequest.getType())
+                .beerName(beerDtoRequest.getBeerName())
+                .abv(beerDtoRequest.getAbv())
+                .originalGravity(beerDtoRequest.getOriginalGravity())
+                .description(beerDtoRequest.getDescription())
+                .ingredients(beerDtoRequest.getIngredients())
+                .price(beerDtoRequest.getPrice())
                 .build();
         beerRepository.save(beerMapper.sourceToDestination(beer));
         return beer;

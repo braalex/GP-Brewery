@@ -22,38 +22,38 @@ public class BrewService {
                 .collect(Collectors.toList());
     }
 
-    public List<BrewDto> getBrewsByBrewer(final Long id) {
+    public List<BrewDto> getBrewsByBrewerId(final Long id) {
         return brewRepository.findAllByBrewerId(id).stream()
                 .map(brewMapper::destinationToSource)
                 .collect(Collectors.toList());
     }
 
-    public BrewDto createBrew(final BrewDto request) {
-        BrewDto brew = BrewDto.builder()
-                .brewerId(request.getBrewerId())
-                .beerId(request.getBeerId())
-                .startDate(request.getStartDate())
-                .endDate(request.getEndDate())
+    public BrewDto createBrew(final BrewDto brewDtoRequest) {
+        final BrewDto brew = BrewDto.builder()
+                .brewerId(brewDtoRequest.getBrewerId())
+                .beerId(brewDtoRequest.getBeerId())
+                .startDate(brewDtoRequest.getStartDate())
+                .endDate(brewDtoRequest.getEndDate())
                 .build();
         brewRepository.save(brewMapper.sourceToDestination(brew));
         return brew;
     }
 
-    public BrewDto modifyBrewById(final Long id, final BrewDto request) {
-        Optional<BrewDto> brew = brewRepository.findById(id)
+    public BrewDto modifyBrewById(final Long id, final BrewDto brewDtoRequest) {
+        final Optional<BrewDto> brew = brewRepository.findById(id)
                 .map(brewMapper::destinationToSource);
         if (brew.isPresent()) {
-            if (request.getBrewerId() != null) {
-                brew.get().setBrewerId(request.getBrewerId());
+            if (brewDtoRequest.getBrewerId() != null) {
+                brew.get().setBrewerId(brewDtoRequest.getBrewerId());
             }
-            if (request.getBeerId() != null) {
-                brew.get().setBeerId(request.getBeerId());
+            if (brewDtoRequest.getBeerId() != null) {
+                brew.get().setBeerId(brewDtoRequest.getBeerId());
             }
-            if (request.getStartDate() != null) {
-                brew.get().setStartDate(request.getStartDate());
+            if (brewDtoRequest.getStartDate() != null) {
+                brew.get().setStartDate(brewDtoRequest.getStartDate());
             }
-            if (request.getEndDate() != null) {
-                brew.get().setEndDate(request.getEndDate());
+            if (brewDtoRequest.getEndDate() != null) {
+                brew.get().setEndDate(brewDtoRequest.getEndDate());
             }
             return brew.get();
         }
