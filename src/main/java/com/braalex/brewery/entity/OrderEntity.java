@@ -9,8 +9,12 @@ import java.time.LocalDate;
 @Table(name = "order")
 @Entity
 public class OrderEntity extends BaseEntity {
-    private Long customerId;
-    private Long beerId;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "customer_id")
+    private CustomerEntity customer;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "beer_id")
+    private BeerEntity beer;
     private Integer quantity;
     private LocalDate orderDate;
 }

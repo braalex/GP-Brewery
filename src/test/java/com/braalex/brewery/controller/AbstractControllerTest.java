@@ -15,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Optional;
@@ -24,6 +25,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@TestPropertySource("classpath:application-test.properties")
 @AutoConfigureMockMvc
 public abstract class AbstractControllerTest {
 
@@ -55,7 +57,7 @@ public abstract class AbstractControllerTest {
     }
 
     protected AuthInfoEntity createCustomerAuthInfo() {
-        final UserEntity customer = new CustomerEntity();
+        final UserEntity customer = new UserEntity();
         customer.setUserRole(UserRole.CUSTOMER);
         customer.setEmail("craft-bar@email.com");
 
@@ -82,7 +84,7 @@ public abstract class AbstractControllerTest {
     }
 
     protected AuthInfoEntity createBrewerAuthInfo() {
-        final UserEntity brewer = new StaffEntity();
+        final UserEntity brewer = new UserEntity();
         brewer.setUserRole(UserRole.BREWER);
         brewer.setEmail("ivanov123@email.com");
 
@@ -109,7 +111,7 @@ public abstract class AbstractControllerTest {
     }
 
     protected AuthInfoEntity createDirectorAuthInfo() {
-        final UserEntity director = new StaffEntity();
+        final UserEntity director = new UserEntity();
         director.setUserRole(UserRole.DIRECTOR);
         director.setEmail("bigboss@email.com");
 

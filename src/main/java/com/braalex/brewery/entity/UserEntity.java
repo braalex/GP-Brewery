@@ -4,11 +4,15 @@ import com.braalex.brewery.security.UserRole;
 import lombok.Data;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Table;
 
 @Data
+@Table(name = "user")
 @Entity
-public abstract class UserEntity extends BaseEntity {
+public class UserEntity extends BaseEntity {
     private String email;
-    private String password;
+    @Enumerated(value = EnumType.STRING)
     private UserRole userRole;
 }

@@ -1,12 +1,12 @@
 package com.braalex.brewery.mapper;
 
 import com.braalex.brewery.dto.CustomerDto;
-import com.braalex.brewery.entity.CustomerEntity;
+import com.braalex.brewery.entity.UserEntity;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface CustomerMapper {
-    CustomerEntity sourceToDestination(CustomerDto source);
+    UserEntity sourceToDestination(CustomerDto source);
 
-    CustomerDto destinationToSource(CustomerEntity destination);
+    CustomerDto destinationToSource(UserEntity destination);
 }
